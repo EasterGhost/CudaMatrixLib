@@ -1,0 +1,1632 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.12.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CudaMatrixLibrary: cudaMatrix类 参考</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">CudaMatrixLibrary<span id="projectnumber">&#160;1.0.0</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.12.0 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() { codefold.init(0); });
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() {
+  initMenu('',true,false,'search.php','搜索',true);
+  $(function() { init_search(); });
+});
+/* @license-end */
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function(){initNavTree('classcuda_matrix.html',''); initResizable(true); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">载入中...</div>
+<div class="SRStatus" id="Searching">搜索中...</div>
+<div class="SRStatus" id="NoMatches">未找到</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">类</a> &#124;
+<a href="#pub-methods">Public 成员函数</a> &#124;
+<a href="#pub-static-methods">静态 Public 成员函数</a> &#124;
+<a href="#friends">友元</a> &#124;
+<a href="classcuda_matrix-members.html">所有成员列表</a>  </div>
+  <div class="headertitle"><div class="title">cudaMatrix类 参考</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>CUDA 矩阵类  
+ <a href="#details">更多...</a></p>
+
+<p><code>#include &lt;<a class="el" href="cuda__matrix_8h_source.html">cuda_matrix.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+类</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcuda_matrix_1_1_element_proxy.html">ElementProxy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵代理类  <a href="classcuda_matrix_1_1_element_proxy.html#details">更多...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public 成员函数</h2></td></tr>
+<tr class="memitem:a8886d38b46992bb1de66fc3b54cf6b8b" id="r_a8886d38b46992bb1de66fc3b54cf6b8b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8886d38b46992bb1de66fc3b54cf6b8b">cudaMatrix</a> ()</td></tr>
+<tr class="memdesc:a8886d38b46992bb1de66fc3b54cf6b8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">默认构造函数  <br /></td></tr>
+<tr class="separator:a8886d38b46992bb1de66fc3b54cf6b8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa46f0b204175c90573be1fca1a74b5aa" id="r_aa46f0b204175c90573be1fca1a74b5aa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa46f0b204175c90573be1fca1a74b5aa">cudaMatrix</a> (int rows, int cols)</td></tr>
+<tr class="memdesc:aa46f0b204175c90573be1fca1a74b5aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">构造函数  <br /></td></tr>
+<tr class="separator:aa46f0b204175c90573be1fca1a74b5aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9772e82702297020e11ac7201c768763" id="r_a9772e82702297020e11ac7201c768763"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9772e82702297020e11ac7201c768763">cudaMatrix</a> (int rows, int cols, MatrixType type)</td></tr>
+<tr class="memdesc:a9772e82702297020e11ac7201c768763"><td class="mdescLeft">&#160;</td><td class="mdescRight">构造函数  <br /></td></tr>
+<tr class="separator:a9772e82702297020e11ac7201c768763"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf5c85c12ab2de59da732d821a4a9eaa" id="r_aaf5c85c12ab2de59da732d821a4a9eaa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf5c85c12ab2de59da732d821a4a9eaa">cudaMatrix</a> (int size)</td></tr>
+<tr class="memdesc:aaf5c85c12ab2de59da732d821a4a9eaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">构造函数  <br /></td></tr>
+<tr class="separator:aaf5c85c12ab2de59da732d821a4a9eaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add19bfdec0f8db4e0abe1ff38ae4c206" id="r_add19bfdec0f8db4e0abe1ff38ae4c206"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add19bfdec0f8db4e0abe1ff38ae4c206">cudaMatrix</a> (int size, MatrixType type)</td></tr>
+<tr class="memdesc:add19bfdec0f8db4e0abe1ff38ae4c206"><td class="mdescLeft">&#160;</td><td class="mdescRight">构造函数  <br /></td></tr>
+<tr class="separator:add19bfdec0f8db4e0abe1ff38ae4c206"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee569a811e73b7ca11ab4969309f1f4c" id="r_aee569a811e73b7ca11ab4969309f1f4c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee569a811e73b7ca11ab4969309f1f4c">cudaMatrix</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;other)</td></tr>
+<tr class="memdesc:aee569a811e73b7ca11ab4969309f1f4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">拷贝构造函数  <br /></td></tr>
+<tr class="separator:aee569a811e73b7ca11ab4969309f1f4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32de65d7c1b685c2651913661a784413" id="r_a32de65d7c1b685c2651913661a784413"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32de65d7c1b685c2651913661a784413">~cudaMatrix</a> ()</td></tr>
+<tr class="memdesc:a32de65d7c1b685c2651913661a784413"><td class="mdescLeft">&#160;</td><td class="mdescRight">析构函数  <br /></td></tr>
+<tr class="separator:a32de65d7c1b685c2651913661a784413"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a758df25a8a807183e084389f1e595a95" id="r_a758df25a8a807183e084389f1e595a95"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a758df25a8a807183e084389f1e595a95">set</a> (int row, int col, float value)</td></tr>
+<tr class="memdesc:a758df25a8a807183e084389f1e595a95"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵按索引赋值  <br /></td></tr>
+<tr class="separator:a758df25a8a807183e084389f1e595a95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e718a4b349290f36ebff465bc5358ef" id="r_a9e718a4b349290f36ebff465bc5358ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e718a4b349290f36ebff465bc5358ef">setData</a> (const vector&lt; float &gt; v)</td></tr>
+<tr class="memdesc:a9e718a4b349290f36ebff465bc5358ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">设置矩阵数据  <br /></td></tr>
+<tr class="separator:a9e718a4b349290f36ebff465bc5358ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ff8a6d3c531ab4f5f9259cf12a73e18" id="r_a2ff8a6d3c531ab4f5f9259cf12a73e18"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ff8a6d3c531ab4f5f9259cf12a73e18">get</a> (int row, int col) const</td></tr>
+<tr class="memdesc:a2ff8a6d3c531ab4f5f9259cf12a73e18"><td class="mdescLeft">&#160;</td><td class="mdescRight">按索引获取矩阵数据  <br /></td></tr>
+<tr class="separator:a2ff8a6d3c531ab4f5f9259cf12a73e18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ec3c03bb81cf36ae7d32cf3cadd017e" id="r_a8ec3c03bb81cf36ae7d32cf3cadd017e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ec3c03bb81cf36ae7d32cf3cadd017e">getData</a> (vector&lt; float &gt; &amp;v,...) const</td></tr>
+<tr class="memdesc:a8ec3c03bb81cf36ae7d32cf3cadd017e"><td class="mdescLeft">&#160;</td><td class="mdescRight">获取矩阵数据  <br /></td></tr>
+<tr class="separator:a8ec3c03bb81cf36ae7d32cf3cadd017e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a773827ad73a71a7e25555810cf6be18a" id="r_a773827ad73a71a7e25555810cf6be18a"><td class="memItemLeft" align="right" valign="top">float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a773827ad73a71a7e25555810cf6be18a">getDataPtr</a> () const</td></tr>
+<tr class="memdesc:a773827ad73a71a7e25555810cf6be18a"><td class="mdescLeft">&#160;</td><td class="mdescRight">获取矩阵数据指针  <br /></td></tr>
+<tr class="separator:a773827ad73a71a7e25555810cf6be18a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11fb6b43078b6d8181b46e05b7e39ad1" id="r_a11fb6b43078b6d8181b46e05b7e39ad1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11fb6b43078b6d8181b46e05b7e39ad1">getRows</a> () const</td></tr>
+<tr class="memdesc:a11fb6b43078b6d8181b46e05b7e39ad1"><td class="mdescLeft">&#160;</td><td class="mdescRight">获取矩阵行数  <br /></td></tr>
+<tr class="separator:a11fb6b43078b6d8181b46e05b7e39ad1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a326f7e75185848b8f113b7a8c57e01e1" id="r_a326f7e75185848b8f113b7a8c57e01e1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a326f7e75185848b8f113b7a8c57e01e1">getCols</a> () const</td></tr>
+<tr class="memdesc:a326f7e75185848b8f113b7a8c57e01e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">获取矩阵列数  <br /></td></tr>
+<tr class="separator:a326f7e75185848b8f113b7a8c57e01e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a94ce32c054fb608656ccb758d2944a" id="r_a0a94ce32c054fb608656ccb758d2944a"><td class="memItemLeft" align="right" valign="top"><a id="a0a94ce32c054fb608656ccb758d2944a" name="a0a94ce32c054fb608656ccb758d2944a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>printData</b> () const</td></tr>
+<tr class="memdesc:a0a94ce32c054fb608656ccb758d2944a"><td class="mdescLeft">&#160;</td><td class="mdescRight">打印矩阵数据 <br /></td></tr>
+<tr class="separator:a0a94ce32c054fb608656ccb758d2944a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b2e4f392290f9c6340e7e10125abcfd" id="r_a6b2e4f392290f9c6340e7e10125abcfd"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b2e4f392290f9c6340e7e10125abcfd">norm</a> (int L) const</td></tr>
+<tr class="memdesc:a6b2e4f392290f9c6340e7e10125abcfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">计算向量的范数  <br /></td></tr>
+<tr class="separator:a6b2e4f392290f9c6340e7e10125abcfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20322e1c4af80ac2853ff6148cf9449d" id="r_a20322e1c4af80ac2853ff6148cf9449d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20322e1c4af80ac2853ff6148cf9449d">operator float</a> () const</td></tr>
+<tr class="memdesc:a20322e1c4af80ac2853ff6148cf9449d"><td class="mdescLeft">&#160;</td><td class="mdescRight">float 类型转换运算符重载  <br /></td></tr>
+<tr class="separator:a20322e1c4af80ac2853ff6148cf9449d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca932d5efca7234f403c48fe4bbddfb3" id="r_aca932d5efca7234f403c48fe4bbddfb3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca932d5efca7234f403c48fe4bbddfb3">operator&lt;</a> (const float n)</td></tr>
+<tr class="memdesc:aca932d5efca7234f403c48fe4bbddfb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">&lt; 运算符重载  <br /></td></tr>
+<tr class="separator:aca932d5efca7234f403c48fe4bbddfb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab31d031e4f3bf754ad85adf8c0e35de7" id="r_ab31d031e4f3bf754ad85adf8c0e35de7"><td class="memItemLeft" align="right" valign="top"><a id="ab31d031e4f3bf754ad85adf8c0e35de7" name="ab31d031e4f3bf754ad85adf8c0e35de7"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;</b> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="separator:ab31d031e4f3bf754ad85adf8c0e35de7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae26f07987f8920db20c34444a737e8c3" id="r_ae26f07987f8920db20c34444a737e8c3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae26f07987f8920db20c34444a737e8c3">operator&lt;=</a> (const float n)</td></tr>
+<tr class="memdesc:ae26f07987f8920db20c34444a737e8c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">&lt;= 运算符重载  <br /></td></tr>
+<tr class="separator:ae26f07987f8920db20c34444a737e8c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6736d43e3584f8c2f9808884799a636f" id="r_a6736d43e3584f8c2f9808884799a636f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6736d43e3584f8c2f9808884799a636f">operator&lt;=</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a6736d43e3584f8c2f9808884799a636f"><td class="mdescLeft">&#160;</td><td class="mdescRight">&lt;= 运算符重载  <br /></td></tr>
+<tr class="separator:a6736d43e3584f8c2f9808884799a636f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61ed0a4d0353c1b2d3ebc98f700f402e" id="r_a61ed0a4d0353c1b2d3ebc98f700f402e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61ed0a4d0353c1b2d3ebc98f700f402e">operator&gt;</a> (const float n)</td></tr>
+<tr class="memdesc:a61ed0a4d0353c1b2d3ebc98f700f402e"><td class="mdescLeft">&#160;</td><td class="mdescRight">== 运算符重载  <br /></td></tr>
+<tr class="separator:a61ed0a4d0353c1b2d3ebc98f700f402e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a159b561055387dc4428083208fab22d1" id="r_a159b561055387dc4428083208fab22d1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a159b561055387dc4428083208fab22d1">operator&gt;</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a159b561055387dc4428083208fab22d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">== 运算符重载  <br /></td></tr>
+<tr class="separator:a159b561055387dc4428083208fab22d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3957b2891a297bc54ad711d16884c025" id="r_a3957b2891a297bc54ad711d16884c025"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3957b2891a297bc54ad711d16884c025">operator&gt;=</a> (const float n)</td></tr>
+<tr class="memdesc:a3957b2891a297bc54ad711d16884c025"><td class="mdescLeft">&#160;</td><td class="mdescRight">&gt;= 运算符重载  <br /></td></tr>
+<tr class="separator:a3957b2891a297bc54ad711d16884c025"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe886e995e644617523b894c8721c76a" id="r_afe886e995e644617523b894c8721c76a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe886e995e644617523b894c8721c76a">operator&gt;=</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:afe886e995e644617523b894c8721c76a"><td class="mdescLeft">&#160;</td><td class="mdescRight">&gt;= 运算符重载  <br /></td></tr>
+<tr class="separator:afe886e995e644617523b894c8721c76a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f8724b676b8962753810b623e97bab6" id="r_a6f8724b676b8962753810b623e97bab6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f8724b676b8962753810b623e97bab6">operator=</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a6f8724b676b8962753810b623e97bab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵赋值运算符重载  <br /></td></tr>
+<tr class="separator:a6f8724b676b8962753810b623e97bab6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4244f710985f78f00b4516f8a06e1393" id="r_a4244f710985f78f00b4516f8a06e1393"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4244f710985f78f00b4516f8a06e1393">operator+</a> (<a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a4244f710985f78f00b4516f8a06e1393"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵加法运算符重载  <br /></td></tr>
+<tr class="separator:a4244f710985f78f00b4516f8a06e1393"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc3b360f5e66421c9cf44c3c08bbb991" id="r_afc3b360f5e66421c9cf44c3c08bbb991"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc3b360f5e66421c9cf44c3c08bbb991">operator+=</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:afc3b360f5e66421c9cf44c3c08bbb991"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵加且赋值运算符重载  <br /></td></tr>
+<tr class="separator:afc3b360f5e66421c9cf44c3c08bbb991"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a088c415c8165226f7107769eb577e445" id="r_a088c415c8165226f7107769eb577e445"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a088c415c8165226f7107769eb577e445">operator-</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a088c415c8165226f7107769eb577e445"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵减法运算符重载  <br /></td></tr>
+<tr class="separator:a088c415c8165226f7107769eb577e445"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e0a73cd10ed686667ed2014ec38d452" id="r_a1e0a73cd10ed686667ed2014ec38d452"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e0a73cd10ed686667ed2014ec38d452">operator-=</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a1e0a73cd10ed686667ed2014ec38d452"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵减法运算符重载  <br /></td></tr>
+<tr class="separator:a1e0a73cd10ed686667ed2014ec38d452"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a047cf52d36352eb26aed830190d0117b" id="r_a047cf52d36352eb26aed830190d0117b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a047cf52d36352eb26aed830190d0117b">operator*=</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a047cf52d36352eb26aed830190d0117b"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵乘且赋值运算符重载  <br /></td></tr>
+<tr class="separator:a047cf52d36352eb26aed830190d0117b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9972126433fbe3a0fdec160efea0b8d0" id="r_a9972126433fbe3a0fdec160efea0b8d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9972126433fbe3a0fdec160efea0b8d0">operator*=</a> (const float scalar)</td></tr>
+<tr class="memdesc:a9972126433fbe3a0fdec160efea0b8d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵标量乘且赋值运算符重载  <br /></td></tr>
+<tr class="separator:a9972126433fbe3a0fdec160efea0b8d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e61f92dea351472b8398ccde0f54fb4" id="r_a2e61f92dea351472b8398ccde0f54fb4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e61f92dea351472b8398ccde0f54fb4">operator^</a> (int pows)</td></tr>
+<tr class="memdesc:a2e61f92dea351472b8398ccde0f54fb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵幂运算符重载  <br /></td></tr>
+<tr class="separator:a2e61f92dea351472b8398ccde0f54fb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25446e823dca16f25a4fac3feb69b8ce" id="r_a25446e823dca16f25a4fac3feb69b8ce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a25446e823dca16f25a4fac3feb69b8ce">operator^=</a> (int pows)</td></tr>
+<tr class="memdesc:a25446e823dca16f25a4fac3feb69b8ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵幂且赋值运算符重载  <br /></td></tr>
+<tr class="separator:a25446e823dca16f25a4fac3feb69b8ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1dbf2342ae5fbf5cc25fc0a8d4d10153" id="r_a1dbf2342ae5fbf5cc25fc0a8d4d10153"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1dbf2342ae5fbf5cc25fc0a8d4d10153">transpose</a> () const</td></tr>
+<tr class="memdesc:a1dbf2342ae5fbf5cc25fc0a8d4d10153"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵转置  <br /></td></tr>
+<tr class="separator:a1dbf2342ae5fbf5cc25fc0a8d4d10153"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a0890e1d67f8b3afb5d151afb0a0208" id="r_a9a0890e1d67f8b3afb5d151afb0a0208"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a0890e1d67f8b3afb5d151afb0a0208">operator~</a> () const</td></tr>
+<tr class="memdesc:a9a0890e1d67f8b3afb5d151afb0a0208"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵转置~运算符重载  <br /></td></tr>
+<tr class="separator:a9a0890e1d67f8b3afb5d151afb0a0208"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2132bd1d664f431d987a442b330dc7d" id="r_aa2132bd1d664f431d987a442b330dc7d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2132bd1d664f431d987a442b330dc7d">operator/</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:aa2132bd1d664f431d987a442b330dc7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵除法运算符重载  <br /></td></tr>
+<tr class="separator:aa2132bd1d664f431d987a442b330dc7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4c66a8aba22a3e22be2ed0d21d82b35" id="r_ad4c66a8aba22a3e22be2ed0d21d82b35"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4c66a8aba22a3e22be2ed0d21d82b35">operator/</a> (const float scalar)</td></tr>
+<tr class="memdesc:ad4c66a8aba22a3e22be2ed0d21d82b35"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵标量除法运算符重载  <br /></td></tr>
+<tr class="separator:ad4c66a8aba22a3e22be2ed0d21d82b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab617737951846d8806919f59b572ca11" id="r_ab617737951846d8806919f59b572ca11"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab617737951846d8806919f59b572ca11">operator/=</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:ab617737951846d8806919f59b572ca11"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵除且赋值运算符重载  <br /></td></tr>
+<tr class="separator:ab617737951846d8806919f59b572ca11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ead31689177583f899768865afa3f6c" id="r_a2ead31689177583f899768865afa3f6c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ead31689177583f899768865afa3f6c">operator/=</a> (const float scalar)</td></tr>
+<tr class="memdesc:a2ead31689177583f899768865afa3f6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵标量除且赋值运算符重载  <br /></td></tr>
+<tr class="separator:a2ead31689177583f899768865afa3f6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85af79c876ebcefc90a2b8f09ffe7766" id="r_a85af79c876ebcefc90a2b8f09ffe7766"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85af79c876ebcefc90a2b8f09ffe7766">operator|</a> (<a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;b)</td></tr>
+<tr class="memdesc:a85af79c876ebcefc90a2b8f09ffe7766"><td class="mdescLeft">&#160;</td><td class="mdescRight">| 运算符重载为解稀疏线性方程组  <br /></td></tr>
+<tr class="separator:a85af79c876ebcefc90a2b8f09ffe7766"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e87fbfc479f92a87a39cf6c3b07667a" id="r_a4e87fbfc479f92a87a39cf6c3b07667a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix_1_1_element_proxy.html">ElementProxy</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e87fbfc479f92a87a39cf6c3b07667a">operator()</a> (int row, int col)</td></tr>
+<tr class="memdesc:a4e87fbfc479f92a87a39cf6c3b07667a"><td class="mdescLeft">&#160;</td><td class="mdescRight">重载 () 运算符，实现矩阵元素的访问和赋值  <br /></td></tr>
+<tr class="separator:a4e87fbfc479f92a87a39cf6c3b07667a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+静态 Public 成员函数</h2></td></tr>
+<tr class="memitem:a15fb6e1074586150c17d2e106460e09a" id="r_a15fb6e1074586150c17d2e106460e09a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15fb6e1074586150c17d2e106460e09a">add</a> (<a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A, <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a15fb6e1074586150c17d2e106460e09a"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵加法静态方法  <br /></td></tr>
+<tr class="separator:a15fb6e1074586150c17d2e106460e09a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabae45460e6b7bc9dced908e08aeb6b9" id="r_aabae45460e6b7bc9dced908e08aeb6b9"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aabae45460e6b7bc9dced908e08aeb6b9">subtract</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A, const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:aabae45460e6b7bc9dced908e08aeb6b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵减法静态方法  <br /></td></tr>
+<tr class="separator:aabae45460e6b7bc9dced908e08aeb6b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f5bd86726f643d2c66611bdebb6808b" id="r_a7f5bd86726f643d2c66611bdebb6808b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f5bd86726f643d2c66611bdebb6808b">multiply</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A, const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a7f5bd86726f643d2c66611bdebb6808b"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵乘法静态方法  <br /></td></tr>
+<tr class="separator:a7f5bd86726f643d2c66611bdebb6808b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e3ac9c2ab168a50f8f59b2bd703f18b" id="r_a8e3ac9c2ab168a50f8f59b2bd703f18b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e3ac9c2ab168a50f8f59b2bd703f18b">dot</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A, const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a8e3ac9c2ab168a50f8f59b2bd703f18b"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵点乘  <br /></td></tr>
+<tr class="separator:a8e3ac9c2ab168a50f8f59b2bd703f18b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7037760481787651a528fd390f837f75" id="r_a7037760481787651a528fd390f837f75"><td class="memItemLeft" align="right" valign="top"><a id="a7037760481787651a528fd390f837f75" name="a7037760481787651a528fd390f837f75"></a>
+static <a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><b>dot</b> (const float scalar, const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A)</td></tr>
+<tr class="separator:a7037760481787651a528fd390f837f75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f12a770b4a6ca5cca523a130358aae3" id="r_a1f12a770b4a6ca5cca523a130358aae3"><td class="memItemLeft" align="right" valign="top"><a id="a1f12a770b4a6ca5cca523a130358aae3" name="a1f12a770b4a6ca5cca523a130358aae3"></a>
+static <a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><b>dot</b> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A, const float scalar)</td></tr>
+<tr class="separator:a1f12a770b4a6ca5cca523a130358aae3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a972d2bab79497ad3ad26bcb58f5c6f48" id="r_a972d2bab79497ad3ad26bcb58f5c6f48"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a972d2bab79497ad3ad26bcb58f5c6f48">divide</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A, const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:a972d2bab79497ad3ad26bcb58f5c6f48"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵标量除法  <br /></td></tr>
+<tr class="separator:a972d2bab79497ad3ad26bcb58f5c6f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ee94fc6849968bd6b6118b96c7495fb" id="r_a4ee94fc6849968bd6b6118b96c7495fb"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ee94fc6849968bd6b6118b96c7495fb">solveSparseSLE</a> (<a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A, <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;b)</td></tr>
+<tr class="memdesc:a4ee94fc6849968bd6b6118b96c7495fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">解稀疏线性方程组  <br /></td></tr>
+<tr class="separator:a4ee94fc6849968bd6b6118b96c7495fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
+友元</h2></td></tr>
+<tr class="memitem:abf6056c07c7d64fa1ce7ba826ba101a9" id="r_abf6056c07c7d64fa1ce7ba826ba101a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf6056c07c7d64fa1ce7ba826ba101a9">operator*</a> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A, const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;B)</td></tr>
+<tr class="memdesc:abf6056c07c7d64fa1ce7ba826ba101a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">矩阵乘法运算符重载  <br /></td></tr>
+<tr class="separator:abf6056c07c7d64fa1ce7ba826ba101a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba944883374f729903f166a0800d0515" id="r_aba944883374f729903f166a0800d0515"><td class="memItemLeft" align="right" valign="top"><a id="aba944883374f729903f166a0800d0515" name="aba944883374f729903f166a0800d0515"></a>
+<a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator*</b> (const float scalar, const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A)</td></tr>
+<tr class="separator:aba944883374f729903f166a0800d0515"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afde864ec7e49f91ba035312e7a6e10d4" id="r_afde864ec7e49f91ba035312e7a6e10d4"><td class="memItemLeft" align="right" valign="top"><a id="afde864ec7e49f91ba035312e7a6e10d4" name="afde864ec7e49f91ba035312e7a6e10d4"></a>
+<a class="el" href="classcuda_matrix.html">cudaMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator*</b> (const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;A, float scalar)</td></tr>
+<tr class="separator:afde864ec7e49f91ba035312e7a6e10d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
+<div class="textblock"><p>CUDA 矩阵类 </p>
+<dl class="section note"><dt>注解</dt><dd>仅支持 float 类型 </dd>
+<dd>
+使用 cuBLAS 实现部分矩阵运算 </dd></dl>
+<dl class="section examples"><dt>示例</dt><dd><a class="el" href="examples_2cuda_matrix_example_8cpp-example.html#_a0">examples/cuda_matrix_example.cpp</a>.</dd>
+</dl>
+</div><h2 class="groupheader">构造及析构函数说明</h2>
+<a id="a8886d38b46992bb1de66fc3b54cf6b8b" name="a8886d38b46992bb1de66fc3b54cf6b8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8886d38b46992bb1de66fc3b54cf6b8b">&#9670;&#160;</a></span>cudaMatrix() <span class="overload">[1/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cudaMatrix::cudaMatrix </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>默认构造函数 </p>
+<dl class="section note"><dt>注解</dt><dd>仅初始化成员变量，不分配内存 </dd></dl>
+
+</div>
+</div>
+<a id="aa46f0b204175c90573be1fca1a74b5aa" name="aa46f0b204175c90573be1fca1a74b5aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa46f0b204175c90573be1fca1a74b5aa">&#9670;&#160;</a></span>cudaMatrix() <span class="overload">[2/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cudaMatrix::cudaMatrix </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>rows</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>cols</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>构造函数 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">rows</td><td>矩阵行数 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cols</td><td>矩阵列数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9772e82702297020e11ac7201c768763" name="a9772e82702297020e11ac7201c768763"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9772e82702297020e11ac7201c768763">&#9670;&#160;</a></span>cudaMatrix() <span class="overload">[3/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cudaMatrix::cudaMatrix </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>rows</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>cols</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MatrixType</td>          <td class="paramname"><span class="paramname"><em>type</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>构造函数 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">rows</td><td>矩阵行数 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cols</td><td>矩阵列数 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>矩阵类型 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aaf5c85c12ab2de59da732d821a4a9eaa" name="aaf5c85c12ab2de59da732d821a4a9eaa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf5c85c12ab2de59da732d821a4a9eaa">&#9670;&#160;</a></span>cudaMatrix() <span class="overload">[4/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cudaMatrix::cudaMatrix </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>size</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>构造函数 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">size</td><td>矩阵的阶数（行数和列数相同） </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="add19bfdec0f8db4e0abe1ff38ae4c206" name="add19bfdec0f8db4e0abe1ff38ae4c206"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add19bfdec0f8db4e0abe1ff38ae4c206">&#9670;&#160;</a></span>cudaMatrix() <span class="overload">[5/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cudaMatrix::cudaMatrix </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MatrixType</td>          <td class="paramname"><span class="paramname"><em>type</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>构造函数 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">size</td><td>矩阵的阶数（行数和列数相同） </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>矩阵类型 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aee569a811e73b7ca11ab4969309f1f4c" name="aee569a811e73b7ca11ab4969309f1f4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee569a811e73b7ca11ab4969309f1f4c">&#9670;&#160;</a></span>cudaMatrix() <span class="overload">[6/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cudaMatrix::cudaMatrix </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>拷贝构造函数 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">other</td><td>源矩阵 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>注解</dt><dd>深拷贝 </dd></dl>
+
+</div>
+</div>
+<a id="a32de65d7c1b685c2651913661a784413" name="a32de65d7c1b685c2651913661a784413"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32de65d7c1b685c2651913661a784413">&#9670;&#160;</a></span>~cudaMatrix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cudaMatrix::~cudaMatrix </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>析构函数 </p>
+<dl class="section note"><dt>注解</dt><dd>参数置0，释放矩阵内存 </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">成员函数说明</h2>
+<a id="a15fb6e1074586150c17d2e106460e09a" name="a15fb6e1074586150c17d2e106460e09a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15fb6e1074586150c17d2e106460e09a">&#9670;&#160;</a></span>add()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::add </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>A</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>矩阵加法静态方法 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">A</td><td>矩阵 A </td></tr>
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A+B </dd></dl>
+<dl class="exception"><dt>异常</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">invalid_argument</td><td>如果 A 和 B 的维度不匹配 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>注解</dt><dd>使用 cuBLAS 实现 </dd>
+<dd>
+会创建新的矩阵，原矩阵不变。该方法不会释放原矩阵的内存 </dd></dl>
+
+</div>
+</div>
+<a id="a972d2bab79497ad3ad26bcb58f5c6f48" name="a972d2bab79497ad3ad26bcb58f5c6f48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a972d2bab79497ad3ad26bcb58f5c6f48">&#9670;&#160;</a></span>divide()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::divide </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>A</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>矩阵标量除法 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">A</td><td>矩阵 A </td></tr>
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A./B </dd></dl>
+<dl class="exception"><dt>异常</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">invalid_argument</td><td>如果 A 和 B 的维度不匹配 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a8e3ac9c2ab168a50f8f59b2bd703f18b" name="a8e3ac9c2ab168a50f8f59b2bd703f18b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e3ac9c2ab168a50f8f59b2bd703f18b">&#9670;&#160;</a></span>dot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::dot </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>A</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>矩阵点乘 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">A</td><td>矩阵 A </td></tr>
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+    <tr><td class="paramname">scalar</td><td>标量 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A.*B </dd></dl>
+<dl class="exception"><dt>异常</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">invalid_argument</td><td>如果 A 和 B 的维度不匹配 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2ff8a6d3c531ab4f5f9259cf12a73e18" name="a2ff8a6d3c531ab4f5f9259cf12a73e18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ff8a6d3c531ab4f5f9259cf12a73e18">&#9670;&#160;</a></span>get()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float cudaMatrix::get </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>col</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>按索引获取矩阵数据 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>行索引 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">col</td><td>列索引 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>数据值 </dd></dl>
+
+</div>
+</div>
+<a id="a326f7e75185848b8f113b7a8c57e01e1" name="a326f7e75185848b8f113b7a8c57e01e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a326f7e75185848b8f113b7a8c57e01e1">&#9670;&#160;</a></span>getCols()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int cudaMatrix::getCols </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获取矩阵列数 </p>
+<dl class="section return"><dt>返回</dt><dd>矩阵的列数 </dd></dl>
+
+</div>
+</div>
+<a id="a8ec3c03bb81cf36ae7d32cf3cadd017e" name="a8ec3c03bb81cf36ae7d32cf3cadd017e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ec3c03bb81cf36ae7d32cf3cadd017e">&#9670;&#160;</a></span>getData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cudaMatrix::getData </td>
+          <td>(</td>
+          <td class="paramtype">vector&lt; float &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>...</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获取矩阵数据 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">v</td><td>数据向量 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a773827ad73a71a7e25555810cf6be18a" name="a773827ad73a71a7e25555810cf6be18a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a773827ad73a71a7e25555810cf6be18a">&#9670;&#160;</a></span>getDataPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float * cudaMatrix::getDataPtr </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获取矩阵数据指针 </p>
+<dl class="section return"><dt>返回</dt><dd>数据指针 </dd></dl>
+
+</div>
+</div>
+<a id="a11fb6b43078b6d8181b46e05b7e39ad1" name="a11fb6b43078b6d8181b46e05b7e39ad1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11fb6b43078b6d8181b46e05b7e39ad1">&#9670;&#160;</a></span>getRows()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int cudaMatrix::getRows </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>获取矩阵行数 </p>
+<dl class="section return"><dt>返回</dt><dd>矩阵的行数 </dd></dl>
+
+</div>
+</div>
+<a id="a7f5bd86726f643d2c66611bdebb6808b" name="a7f5bd86726f643d2c66611bdebb6808b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f5bd86726f643d2c66611bdebb6808b">&#9670;&#160;</a></span>multiply()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::multiply </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>A</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>矩阵乘法静态方法 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">A</td><td>矩阵 A </td></tr>
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A*B </dd></dl>
+<dl class="exception"><dt>异常</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">invalid_argument</td><td>如果 A 的列数不等于 B 的行数 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>注解</dt><dd>使用 cuBLAS 实现 </dd>
+<dd>
+会创建新的矩阵，原矩阵不变。该方法不会释放原矩阵的内存 </dd></dl>
+
+</div>
+</div>
+<a id="a6b2e4f392290f9c6340e7e10125abcfd" name="a6b2e4f392290f9c6340e7e10125abcfd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b2e4f392290f9c6340e7e10125abcfd">&#9670;&#160;</a></span>norm()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float cudaMatrix::norm </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>L</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>计算向量的范数 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">L</td><td>-范数的阶数 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>向量的范数 </dd></dl>
+
+</div>
+</div>
+<a id="a20322e1c4af80ac2853ff6148cf9449d" name="a20322e1c4af80ac2853ff6148cf9449d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20322e1c4af80ac2853ff6148cf9449d">&#9670;&#160;</a></span>operator float()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cudaMatrix::operator float </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>float 类型转换运算符重载 </p>
+<dl class="section return"><dt>返回</dt><dd>float 类型数据 </dd></dl>
+
+</div>
+</div>
+<a id="a4e87fbfc479f92a87a39cf6c3b07667a" name="a4e87fbfc479f92a87a39cf6c3b07667a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e87fbfc479f92a87a39cf6c3b07667a">&#9670;&#160;</a></span>operator()()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix_1_1_element_proxy.html">cudaMatrix::ElementProxy</a> cudaMatrix::operator() </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>col</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>重载 () 运算符，实现矩阵元素的访问和赋值 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>行索引 </td></tr>
+    <tr><td class="paramname">col</td><td>列索引 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>矩阵代理类 </dd></dl>
+
+</div>
+</div>
+<a id="a047cf52d36352eb26aed830190d0117b" name="a047cf52d36352eb26aed830190d0117b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a047cf52d36352eb26aed830190d0117b">&#9670;&#160;</a></span>operator*=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator*= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵乘且赋值运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A*B </dd></dl>
+
+</div>
+</div>
+<a id="a9972126433fbe3a0fdec160efea0b8d0" name="a9972126433fbe3a0fdec160efea0b8d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9972126433fbe3a0fdec160efea0b8d0">&#9670;&#160;</a></span>operator*=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator*= </td>
+          <td>(</td>
+          <td class="paramtype">const float</td>          <td class="paramname"><span class="paramname"><em>scalar</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵标量乘且赋值运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scalar</td><td>标量 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A*scalar </dd></dl>
+
+</div>
+</div>
+<a id="a4244f710985f78f00b4516f8a06e1393" name="a4244f710985f78f00b4516f8a06e1393"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4244f710985f78f00b4516f8a06e1393">&#9670;&#160;</a></span>operator+()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator+ </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵加法运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A+B </dd></dl>
+
+</div>
+</div>
+<a id="afc3b360f5e66421c9cf44c3c08bbb991" name="afc3b360f5e66421c9cf44c3c08bbb991"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc3b360f5e66421c9cf44c3c08bbb991">&#9670;&#160;</a></span>operator+=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵加且赋值运算符重载 </p>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A+B </dd></dl>
+
+</div>
+</div>
+<a id="a088c415c8165226f7107769eb577e445" name="a088c415c8165226f7107769eb577e445"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a088c415c8165226f7107769eb577e445">&#9670;&#160;</a></span>operator-()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator- </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵减法运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A-B </dd></dl>
+
+</div>
+</div>
+<a id="a1e0a73cd10ed686667ed2014ec38d452" name="a1e0a73cd10ed686667ed2014ec38d452"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e0a73cd10ed686667ed2014ec38d452">&#9670;&#160;</a></span>operator-=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator-= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵减法运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A-B </dd></dl>
+
+</div>
+</div>
+<a id="aa2132bd1d664f431d987a442b330dc7d" name="aa2132bd1d664f431d987a442b330dc7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2132bd1d664f431d987a442b330dc7d">&#9670;&#160;</a></span>operator/() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator/ </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵除法运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A./B </dd></dl>
+<dl class="exception"><dt>异常</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">invalid_argument</td><td>如果 A 和 B 的维度不匹配 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad4c66a8aba22a3e22be2ed0d21d82b35" name="ad4c66a8aba22a3e22be2ed0d21d82b35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4c66a8aba22a3e22be2ed0d21d82b35">&#9670;&#160;</a></span>operator/() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator/ </td>
+          <td>(</td>
+          <td class="paramtype">const float</td>          <td class="paramname"><span class="paramname"><em>scalar</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵标量除法运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scalar</td><td>标量 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A/scalar </dd></dl>
+
+</div>
+</div>
+<a id="ab617737951846d8806919f59b572ca11" name="ab617737951846d8806919f59b572ca11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab617737951846d8806919f59b572ca11">&#9670;&#160;</a></span>operator/=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator/= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵除且赋值运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A./B </dd></dl>
+
+</div>
+</div>
+<a id="a2ead31689177583f899768865afa3f6c" name="a2ead31689177583f899768865afa3f6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ead31689177583f899768865afa3f6c">&#9670;&#160;</a></span>operator/=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator/= </td>
+          <td>(</td>
+          <td class="paramtype">const float</td>          <td class="paramname"><span class="paramname"><em>scalar</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵标量除且赋值运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scalar</td><td>标量 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A/scalar </dd></dl>
+
+</div>
+</div>
+<a id="aca932d5efca7234f403c48fe4bbddfb3" name="aca932d5efca7234f403c48fe4bbddfb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca932d5efca7234f403c48fe4bbddfb3">&#9670;&#160;</a></span>operator&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cudaMatrix::operator&lt; </td>
+          <td>(</td>
+          <td class="paramtype">const float</td>          <td class="paramname"><span class="paramname"><em>n</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&lt; 运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>待比较的数 </td></tr>
+    <tr><td class="paramname">B</td><td>待比较的矩阵 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6736d43e3584f8c2f9808884799a636f" name="a6736d43e3584f8c2f9808884799a636f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6736d43e3584f8c2f9808884799a636f">&#9670;&#160;</a></span>operator&lt;=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cudaMatrix::operator&lt;= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&lt;= 运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">B</td><td>待比较的1x1矩阵型浮点数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae26f07987f8920db20c34444a737e8c3" name="ae26f07987f8920db20c34444a737e8c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae26f07987f8920db20c34444a737e8c3">&#9670;&#160;</a></span>operator&lt;=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cudaMatrix::operator&lt;= </td>
+          <td>(</td>
+          <td class="paramtype">const float</td>          <td class="paramname"><span class="paramname"><em>n</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&lt;= 运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>待比较的数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6f8724b676b8962753810b623e97bab6" name="a6f8724b676b8962753810b623e97bab6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f8724b676b8962753810b623e97bab6">&#9670;&#160;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵赋值运算符重载 </p>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为B </dd></dl>
+
+</div>
+</div>
+<a id="a159b561055387dc4428083208fab22d1" name="a159b561055387dc4428083208fab22d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a159b561055387dc4428083208fab22d1">&#9670;&#160;</a></span>operator&gt;() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cudaMatrix::operator&gt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>== 运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">B</td><td>待比较的1x1矩阵型浮点数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a61ed0a4d0353c1b2d3ebc98f700f402e" name="a61ed0a4d0353c1b2d3ebc98f700f402e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61ed0a4d0353c1b2d3ebc98f700f402e">&#9670;&#160;</a></span>operator&gt;() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cudaMatrix::operator&gt; </td>
+          <td>(</td>
+          <td class="paramtype">const float</td>          <td class="paramname"><span class="paramname"><em>n</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>== 运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>待比较的数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="afe886e995e644617523b894c8721c76a" name="afe886e995e644617523b894c8721c76a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe886e995e644617523b894c8721c76a">&#9670;&#160;</a></span>operator&gt;=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cudaMatrix::operator&gt;= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&gt;= 运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">B</td><td>待比较的1x1矩阵型浮点数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3957b2891a297bc54ad711d16884c025" name="a3957b2891a297bc54ad711d16884c025"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3957b2891a297bc54ad711d16884c025">&#9670;&#160;</a></span>operator&gt;=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cudaMatrix::operator&gt;= </td>
+          <td>(</td>
+          <td class="paramtype">const float</td>          <td class="paramname"><span class="paramname"><em>n</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&gt;= 运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>待比较的数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2e61f92dea351472b8398ccde0f54fb4" name="a2e61f92dea351472b8398ccde0f54fb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e61f92dea351472b8398ccde0f54fb4">&#9670;&#160;</a></span>operator^()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator^ </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>pows</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵幂运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pows</td><td>幂次 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A^pows </dd></dl>
+
+</div>
+</div>
+<a id="a25446e823dca16f25a4fac3feb69b8ce" name="a25446e823dca16f25a4fac3feb69b8ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25446e823dca16f25a4fac3feb69b8ce">&#9670;&#160;</a></span>operator^=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator^= </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>pows</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵幂且赋值运算符重载 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pows</td><td>幂次 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A^pows </dd></dl>
+
+</div>
+</div>
+<a id="a85af79c876ebcefc90a2b8f09ffe7766" name="a85af79c876ebcefc90a2b8f09ffe7766"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85af79c876ebcefc90a2b8f09ffe7766">&#9670;&#160;</a></span>operator|()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator| </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>| 运算符重载为解稀疏线性方程组 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">b</td><td>常数向量 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A<b></b> </dd></dl>
+
+</div>
+</div>
+<a id="a9a0890e1d67f8b3afb5d151afb0a0208" name="a9a0890e1d67f8b3afb5d151afb0a0208"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a0890e1d67f8b3afb5d151afb0a0208">&#9670;&#160;</a></span>operator~()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::operator~ </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵转置~运算符重载 </p>
+<dl class="section return"><dt>返回</dt><dd>转置后的矩阵 </dd></dl>
+
+</div>
+</div>
+<a id="a758df25a8a807183e084389f1e595a95" name="a758df25a8a807183e084389f1e595a95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a758df25a8a807183e084389f1e595a95">&#9670;&#160;</a></span>set()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cudaMatrix::set </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>col</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵按索引赋值 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>行索引 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">col</td><td>列索引 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>数据值 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9e718a4b349290f36ebff465bc5358ef" name="a9e718a4b349290f36ebff465bc5358ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e718a4b349290f36ebff465bc5358ef">&#9670;&#160;</a></span>setData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cudaMatrix::setData </td>
+          <td>(</td>
+          <td class="paramtype">const vector&lt; float &gt;</td>          <td class="paramname"><span class="paramname"><em>v</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>设置矩阵数据 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">v</td><td>数据向量 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4ee94fc6849968bd6b6118b96c7495fb" name="a4ee94fc6849968bd6b6118b96c7495fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ee94fc6849968bd6b6118b96c7495fb">&#9670;&#160;</a></span>solveSparseSLE()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::solveSparseSLE </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>A</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>解稀疏线性方程组 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">A</td><td>系数矩阵 </td></tr>
+    <tr><td class="paramname">b</td><td>常数向量 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A<b></b> </dd></dl>
+
+</div>
+</div>
+<a id="aabae45460e6b7bc9dced908e08aeb6b9" name="aabae45460e6b7bc9dced908e08aeb6b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabae45460e6b7bc9dced908e08aeb6b9">&#9670;&#160;</a></span>subtract()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::subtract </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>A</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>矩阵减法静态方法 </p>
+<dl class="params"><dt>参数</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">A</td><td>矩阵 A </td></tr>
+    <tr><td class="paramname">B</td><td>矩阵 B </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A-B </dd></dl>
+
+</div>
+</div>
+<a id="a1dbf2342ae5fbf5cc25fc0a8d4d10153" name="a1dbf2342ae5fbf5cc25fc0a8d4d10153"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1dbf2342ae5fbf5cc25fc0a8d4d10153">&#9670;&#160;</a></span>transpose()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> cudaMatrix::transpose </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>矩阵转置 </p>
+<dl class="section return"><dt>返回</dt><dd>转置后的矩阵 </dd></dl>
+<dl class="section note"><dt>注解</dt><dd>使用 cuBLAS 实现 </dd>
+<dd>
+会创建新的矩阵，原矩阵不变。该方法不会释放原矩阵的内存 </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">友元及相关符号说明</h2>
+<a id="abf6056c07c7d64fa1ce7ba826ba101a9" name="abf6056c07c7d64fa1ce7ba826ba101a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf6056c07c7d64fa1ce7ba826ba101a9">&#9670;&#160;</a></span>operator*</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcuda_matrix.html">cudaMatrix</a> operator* </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>A</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classcuda_matrix.html">cudaMatrix</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>B</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>矩阵乘法运算符重载 </p>
+<dl class="section return"><dt>返回</dt><dd>结果矩阵为A*B </dd></dl>
+
+</div>
+</div>
+<hr/>该类的文档由以下文件生成:<ul>
+<li>CudaRuntime/<a class="el" href="cuda__matrix_8h_source.html">cuda_matrix.h</a></li>
+<li>CudaRuntime/<b>cuda_matrix.cpp</b></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="classcuda_matrix.html">cudaMatrix</a></li>
+    <li class="footer">制作者 <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+  </ul>
+</div>
+</body>
+</html>
