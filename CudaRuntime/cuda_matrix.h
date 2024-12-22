@@ -36,6 +36,8 @@
 #include <cuda_runtime.h>
 #include <curand_kernel.h>
 #include <device_launch_parameters.h>
+#include <sm_20_intrinsics.h>
+#include <device_double_functions.h>
 #include <cublas_v2.h>
 #include <cusolverDn.h>
 #include <iostream>
@@ -178,6 +180,28 @@ public:
 	*/
 	~cudaMatrix();
 
+	void resize(int rows, int cols);
+
+	static cudaMatrix zeros(int rows, int cols);
+
+	static cudaMatrix zeros(int size);
+
+	static cudaMatrix ones(int rows, int cols);
+
+	static cudaMatrix ones(int size);
+
+	static cudaMatrix identity(int size);
+
+	static cudaMatrix random(int rows, int cols);
+
+	static cudaMatrix random(int size);
+
+	/**
+	* @brief 矩阵赋值运算符重载
+	* @return 结果矩阵为B
+	*/
+	cudaMatrix operator = (const cudaMatrix& B);
+
 	/**
 	* @brief 矩阵按索引赋值
 	* @param[in] row 行索引
@@ -287,12 +311,6 @@ public:
 	bool operator >= (const cudaMatrix& B);
 
 	/**
-	* @brief 矩阵赋值运算符重载
-	* @return 结果矩阵为B
-	*/
-	cudaMatrix operator = (const cudaMatrix& B);
-
-	/**
 	* @brief 矩阵加法静态方法
 	* @param A 矩阵 A
 	* @param B 矩阵 B
@@ -395,7 +413,12 @@ public:
 	*/
 	cudaMatrix transpose() const;
 
-	static cudaMatrix Trans(const cudaMatrix& A);
+	/**
+	* @brief 矩阵转置静态方法重载
+	* @param A 矩阵 A
+	* @return 转置后的矩阵
+	*/
+	static cudaMatrix transpose(const cudaMatrix& A);
 
 	/**
 	* @brief 矩阵转置~运算符重载
@@ -403,7 +426,18 @@ public:
 	*/
 	cudaMatrix operator ~ () const;
 
+	/**
+	* @brief 矩阵求迹
+	* @return 矩阵的迹
+	*/
 	float trace() const;
+
+	/**
+	* @brief 矩阵求迹静态方法重载
+	* @param A 矩阵 A
+	* @return 矩阵A的迹
+	*/
+	static float trace(const cudaMatrix& A);
 
 	/**
 	* @brief 矩阵点乘
@@ -473,10 +507,6 @@ public:
 	float det() const;
 
 	static float det(const cudaMatrix& A);
-
-	float max() const;
-
-	static float max(const cudaMatrix& A);
 
 	static cudaMatrix diag(vector<int> placement, ...);
 

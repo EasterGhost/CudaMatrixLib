@@ -10,6 +10,14 @@
 */
 #include "cuda_matrix.h"
 
+extern "C" __global__ static void reshape_kernel(const float* data, float* result, int rows_old, int cols_old, int rows_new, int cols_new) {
+	int idx = threadIdx.x + blockIdx.x * blockDim.x;
+	int idy = threadIdx.y + blockIdx.y * blockDim.y;
+	if (idx < rows_new && idy < cols_new && idx < rows_old && idy < cols_old) {
+		result[idx * cols_new + idy] = data[idx * cols_old + idy];
+	}
+}
+
 extern "C" __global__ static void fill_diag_kernel(float* matrix, float* diag, int offset, int size) {
 	int idx = threadIdx.x + blockIdx.x * blockDim.x;
 	if (idx < size) {
@@ -339,7 +347,7 @@ cudaMatrix::cudaMatrix(int size, MatrixType type) : rows(size), cols(size) {
 cudaMatrix::cudaMatrix(const cudaMatrix& others) : rows(others.rows), cols(others.cols) {
 	cudaError_t err = cudaMalloc((void**)&this->data, static_cast<size_t>(rows) * cols * sizeof(float));
 	if (err != cudaSuccess) {
-		//throw runtime_error("cudaMalloc failed! (code M0006)");
+		throw runtime_error("cudaMalloc failed! (code M0006)");
 	}
 	cudaMemcpy(this->data, others.data, static_cast<size_t>(rows) * cols * sizeof(float), cudaMemcpyDeviceToDevice);
 }
@@ -351,6 +359,46 @@ cudaMatrix::~cudaMatrix() {
 	cols = 0;
 }
 
+void cudaMatrix::resize(int rows, int cols) {
+	if (this->rows == rows && this->cols == cols) { return; }
+	float* new_data = nullptr;
+	cudaMalloc((void**)&new_data, static_cast<size_t>(rows) * cols * sizeof(float));
+	cudaMemset(new_data, 0, static_cast<size_t>(rows) * cols * sizeof(float));
+	dim3 threadsPerBlock = autoSetBlockSize2D(reshape_kernel, rows, cols);
+	dim3 blocksPerGrid = dim3((rows + threadsPerBlock.x - 1) / threadsPerBlock.x, (cols + threadsPerBlock.y - 1) / threadsPerBlock.y);
+	reshape_kernel << <blocksPerGrid, threadsPerBlock >> > (data, new_data, this->rows, this->cols, rows, cols);
+	cudaFree(data);
+	data = new_data;
+	this->rows = rows;
+	this->cols = cols;
+}
+
+cudaMatrix cudaMatrix::zeros(int rows, int cols) { return cudaMatrix(rows, cols); }
+
+cudaMatrix cudaMatrix::zeros(int size) { return cudaMatrix(size); }
+
+cudaMatrix cudaMatrix::ones(int rows, int cols) { return cudaMatrix(rows, cols, Ones); }
+
+cudaMatrix cudaMatrix::ones(int size) { return cudaMatrix(size, Ones); }
+
+cudaMatrix cudaMatrix::identity(int size) { return cudaMatrix(size, Identity); }
+
+cudaMatrix cudaMatrix::random(int rows, int cols) { return cudaMatrix(rows, cols, Random); }
+
+cudaMatrix cudaMatrix::random(int size) { return cudaMatrix(size, Random); }
+
+cudaMatrix cudaMatrix::operator=(const cudaMatrix& B) {
+	if (this == &B) { return *this; }
+	if (rows != B.rows || cols != B.cols) {
+		cudaFree(data);
+		cudaMalloc((void**)&data, static_cast<size_t>(B.rows) * B.cols * sizeof(float));
+		rows = B.rows;
+		cols = B.cols;
+	}
+	cudaMemcpy(data, B.data, static_cast<size_t>(B.rows) * B.cols * sizeof(float), cudaMemcpyDeviceToDevice);
+	return *this;
+}
+
 void cudaMatrix::set(int row, int col, float value) {
 	if (row < 0 || row >= rows || col < 0 || col >= cols) {
 		throw out_of_range("索引超出范围。");
@@ -358,10 +406,7 @@ void cudaMatrix::set(int row, int col, float value) {
 	cudaMemcpy(data + static_cast<size_t>(row) * cols + col, &value, sizeof(float), cudaMemcpyHostToDevice);
 }
 
-void cudaMatrix::setData(const vector<float> v) {
-	cudaMemcpy(data, v.data(),
-		v.size() * sizeof(float), cudaMemcpyHostToDevice);
-}
+void cudaMatrix::setData(const vector<float> v) { cudaMemcpy(data, v.data(), v.size() * sizeof(float), cudaMemcpyHostToDevice); }
 
 float cudaMatrix::get(int row, int col) const {
 	if (row < 0 || row >= rows || col < 0 || col >= cols) {
@@ -400,19 +445,16 @@ void cudaMatrix::printData() const {
 		}
 		cout << endl;
 	}
-	hostData.~vector();
 }
 
 float cudaMatrix::norm(int L) const {
-	if (rows != 1 && cols != 1) {
+	if (rows != 1 && cols != 1)
 		throw invalid_argument("输入不是向量，无法求范数。");
-	}
-	int size = rows > cols ? rows : cols;
-	if (L <= 0) {
+	if (L <= 0)
 		throw invalid_argument("范数阶数必须大于 0。");
-	}
-	int threadsPerBlock = 768;
-	//int threadsPerBlock = autoSetBlockSize(norm_kernel);
+	int size = max(rows, cols);
+	//int threadsPerBlock = 768;
+	int threadsPerBlock = autoSetBlockSize(norm_kernel);
 	int blocksPerGrid = (size + threadsPerBlock - 1) / threadsPerBlock;
 	float* vec2 = nullptr;
 	cudaMalloc((void**)&vec2, size * sizeof(float));
@@ -429,67 +471,58 @@ float cudaMatrix::norm(int L) const {
 }
 
 cudaMatrix::operator float() const {
-	if (rows != 1 || cols != 1) {
-		throw invalid_argument("矩阵不是 1x1，无法转换为 float。");
-	}
+	if (rows != 1 || cols != 1)
+		throw invalid_argument("矩阵规模不是 1x1，无法转换为 float。");
 	float result = 0.0f;
 	cudaMemcpy(&result, data, sizeof(float), cudaMemcpyDeviceToHost);
 	return result;
 }
 
 bool cudaMatrix::operator<(const float n) {
-	if (rows != 1 || cols != 1) {
+	if (rows != 1 || cols != 1)
 		throw invalid_argument("输入不是标量，无法比较。");
-	}
 	return data[0] < n;
 }
 
 bool cudaMatrix::operator<(const cudaMatrix& B) {
-	if (rows != 1 || cols != 1 || B.rows != 1 || B.cols != 1) {
+	if (rows != 1 || cols != 1 || B.rows != 1 || B.cols != 1)
 		throw invalid_argument("输入不是标量，无法比较。");
-	}
 	return data[0] < B.data[0];
 }
 
 bool cudaMatrix::operator<=(const float n) {
-	if (rows != 1 || cols != 1) {
+	if (rows != 1 || cols != 1)
 		throw invalid_argument("输入不是标量，无法比较。");
-	}
 	return data[0] <= n;
 }
 
 bool cudaMatrix::operator<=(const cudaMatrix& B) {
-	if (rows != 1 || cols != 1 || B.rows != 1 || B.cols != 1) {
+	if (rows != 1 || cols != 1 || B.rows != 1 || B.cols != 1)
 		throw invalid_argument("输入不是标量，无法比较。");
-	}
 	return data[0] <= B.data[0];
 }
 
 bool cudaMatrix::operator>(const float n) {
-	if (rows != 1 || cols != 1) {
+	if (rows != 1 || cols != 1)
 		throw invalid_argument("输入不是标量，无法比较。");
-	}
 	return data[0] > n;
 }
 
 bool cudaMatrix::operator>(const cudaMatrix& B) {
-	if (rows != 1 || cols != 1 || B.rows != 1 || B.cols != 1) {
+	if (rows != 1 || cols != 1 || B.rows != 1 || B.cols != 1)
 		throw invalid_argument("输入不是标量，无法比较。");
-	}
 	return data[0] > B.data[0];
 }
 
 bool cudaMatrix::operator>=(const float n) {
-	if (rows != 1 || cols != 1) {
+	if (rows != 1 || cols != 1)
 		throw invalid_argument("输入不是标量，无法比较。");
-	}
 	return data[0] >= n;
 }
 
 bool cudaMatrix::operator>=(const cudaMatrix& B) {
-	if (rows != 1 || cols != 1 || B.rows != 1 || B.cols != 1) {
+	if (rows != 1 || cols != 1 || B.rows != 1 || B.cols != 1)
 		throw invalid_argument("输入不是标量，无法比较。");
-	}
 	return data[0] >= B.data[0];
 }
 
@@ -511,18 +544,6 @@ cudaMatrix cudaMatrix::add(cudaMatrix& A, cudaMatrix& B) {
 
 	cublasDestroy_v2(handle);
 	return result;
-}
-
-cudaMatrix cudaMatrix::operator=(const cudaMatrix& B) {
-	if (this == &B) { return *this; }
-	if (rows != B.rows || cols != B.cols) {
-		cudaFree(data);
-		cudaMalloc((void**)&data, static_cast<size_t>(B.rows) * B.cols * sizeof(float));
-		rows = B.rows;
-		cols = B.cols;
-	}
-	cudaMemcpy(data, B.data, static_cast<size_t>(B.rows) * B.cols * sizeof(float), cudaMemcpyDeviceToDevice);
-	return *this;
 }
 
 cudaMatrix cudaMatrix::operator+(cudaMatrix& B) { return add(*this, B); }
@@ -721,7 +742,7 @@ cudaMatrix cudaMatrix::transpose() const {
 	return result;
 }
 
-cudaMatrix cudaMatrix::Trans(const cudaMatrix& A) { return A.transpose(); }
+cudaMatrix cudaMatrix::transpose(const cudaMatrix& A) { return A.transpose(); }
 
 cudaMatrix cudaMatrix::operator~() const { return this->transpose(); }
 
@@ -746,6 +767,8 @@ float cudaMatrix::trace() const {
 	cudaFree(d_result);
 	return (float)result;
 }
+
+float cudaMatrix::trace(const cudaMatrix& A) { return A.trace(); }
 
 cudaMatrix cudaMatrix::scalarMultiply(float scalar) const {
 	cudaMatrix result(rows, cols);
@@ -806,18 +829,12 @@ cudaMatrix cudaMatrix::dot(const cudaMatrix& A, const cudaMatrix& B) {
 	if (A.cols == 1 || A.rows == 1) {
 		cudaMatrix temp1 = vectorBroadcast2Matrix(A, row, col);
 		cudaMemcpy(tempA.data, temp1.data, static_cast<size_t>(row) * col * sizeof(float), cudaMemcpyDeviceToDevice);
-		temp1.~cudaMatrix();
-		cout << "tempA:" << endl;
-		tempA.printData();
 	}
 	else
 		cudaMemcpy(tempA.data, A.data, static_cast<size_t>(A.rows) * A.cols * sizeof(float), cudaMemcpyDeviceToDevice);
 	if (B.cols == 1 || B.rows == 1) {
 		cudaMatrix temp2 = vectorBroadcast2Matrix(B, row, col);
 		cudaMemcpy(tempB.data, temp2.data, static_cast<size_t>(row) * col * sizeof(float), cudaMemcpyDeviceToDevice);
-		temp2.~cudaMatrix();
-		cout << "tempB:" << endl;
-		tempB.printData();
 	}
 	else
 		cudaMemcpy(tempB.data, B.data, static_cast<size_t>(row) * col * sizeof(float), cudaMemcpyDeviceToDevice);
@@ -910,24 +927,16 @@ float cudaMatrix::det() const {
 	int size = rows;
 	cusolverDnHandle_t handle;
 	cusolverDnCreate(&handle);
-
-	// 创建一个副本以避免修改原始矩阵
 	cudaMatrix temp(*this);
-
-	// 分配内存以存储Pivots和Info
 	int* Pivots = nullptr;
 	int* Info = nullptr;
 	cudaMalloc((void**)&Pivots, size * sizeof(int));
 	cudaMalloc((void**)&Info, sizeof(int));
-
-	// LU分解
 	int workspace_size = 0;
 	cusolverDnSgetrf_bufferSize(handle, size, size, temp.data, size, &workspace_size);
 	float* workspace = nullptr;
 	cudaMalloc((void**)&workspace, workspace_size * sizeof(float));
 	cusolverDnSgetrf(handle, size, size, temp.data, size, workspace, Pivots, Info);
-
-	// 计算行列式
 	float det = 1.0f;
 	float* diag = nullptr;
 	cudaMalloc((void**)&diag, size * sizeof(float));
@@ -938,25 +947,18 @@ float cudaMatrix::det() const {
 	vector<float> hostDiag(size);
 	cudaMemcpy(hostDiag.data(), diag, size * sizeof(float), cudaMemcpyDeviceToHost);
 	for (int i = 0; i < size; ++i) { det *= hostDiag[i]; }
-
-	// 检查Pivots以确定行列式的符号
-	int* h_Pivots = new int[size];
-	cudaMemcpy(h_Pivots, Pivots, size * sizeof(int), cudaMemcpyDeviceToHost);
+	vector<int> hostPivots(size);
+	cudaMemcpy(hostPivots.data(), Pivots, size * sizeof(int), cudaMemcpyDeviceToHost);
 	int pivotSign = 1;
 	for (int i = 0; i < size; ++i) {
-		if (h_Pivots[i] != (i + 1)) {
+		if (hostPivots[i] != (i + 1))
 			pivotSign *= -1;
-		}
 	}
 	det *= pivotSign;
-
-	// 释放内存
-	delete[] h_Pivots;
 	cudaFree(Pivots);
 	cudaFree(Info);
 	cudaFree(workspace);
 	cusolverDnDestroy(handle);
-
 	return det;
 }
 
@@ -966,20 +968,22 @@ cudaMatrix cudaMatrix::diag(vector<int> offset, ...) {
 	int num = offset.size();
 	va_list args;
 	va_start(args, offset);
-	vector<cudaMatrix> arg(num);
-	arg[0] = va_arg(args, cudaMatrix);
+	vector<vector<float>> arg(num);
 	for (int i = 0; i < num; ++i) {
-		arg[i] = cudaMatrix(va_arg(args, cudaMatrix));
-		//if (arg[i].data == nullptr)
-			//throw invalid_argument("输入矩阵指针为空。");
+		arg[i] = va_arg(args, vector<float>);
+		if (arg[i].data() == nullptr)
+			throw invalid_argument("输入矩阵指针为空。");
 	}
 	va_end(args);
-	int size = arg[0].rows > arg[0].cols ? arg[0].rows : arg[0].cols;
+	int size = arg[0].size();
 	cudaMatrix result(size);
-	for (int i = 0; i < num; ++i) {
-		int threadsPerBlock = autoSetBlockSize(fill_diag_kernel);
-		int blocksPerGrid = (size + threadsPerBlock - 1) / threadsPerBlock;
-		fill_diag_kernel << <blocksPerGrid, threadsPerBlock >> > (result.data, arg[i].data, size, offset[i]);
+	int threadsPerBlock = autoSetBlockSize(fill_diag_kernel);
+	int blocksPerGrid = (size + threadsPerBlock - 1) / threadsPerBlock;
+	for (int i = 0; i < num; i++) {
+		float* tmp = nullptr;
+		cudaMalloc((void**)&tmp, arg[i].size() * sizeof(float));
+		cudaMemcpy(tmp, arg[i].data(), arg[i].size() * sizeof(float), cudaMemcpyHostToDevice);
+		fill_diag_kernel << <blocksPerGrid, threadsPerBlock >> > (result.data, tmp, offset[i], size);
 	}
 	return result;
 }
