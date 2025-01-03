@@ -1,38 +1,49 @@
+// 测试文件：test_assemble_blocks.cpp
+
 #include "cuda_matrix.h"
 
-static float kahan_add(vector<float> arr, int size) {
-	float sum = 0.0f;
-	float c = 0.0f;
-	for (int i = 0; i < size; i++) {
-		float y = arr[i] * arr[i] - c;
-		float t = sum + y;
-		c = (t - sum) - y;
-		sum = t;
-	}
-	return sum;
-}
-
 int main() {
-	vector<int> offsets = { 0, 1, -1 };
-	vector<float> diag1 = { 1.0f, 2.0f, 3.0f };
-	vector<float> diag2 = { 4.0f, 5.0f };
-	vector<float> diag3 = { 0.0f, 6.0f, 7.0f };
+	// 创建子矩阵 A, B, C, D
+	cudaMatrix A(2, 2);
+	A.setData({ 1, 2, 3, 4 });
 
-	cudaMatrix d1(diag1.size(), 1);
-	d1.setData(diag1);
-	cudaMatrix d2(diag2.size(), 1);
-	d2.setData(diag2);
-	cudaMatrix d3(diag3.size(), 1);
-	d3.setData(diag3);
+	cudaMatrix B(2, 3);
+	B.setData({ 5, 6, 7, 8, 9, 10 });
 
-	cudaMatrix result = cudaMatrix::diag(offsets, diag1, diag2, diag3);
-	result.printData();
-	cout << "det = " << result.det() << endl;
-	result.resize(4, 5);
-	result.printData();
-	result.resize(2, 2);
-	result.printData();
-	//cout << "norm = " << result.norm(2) << endl;
+	cudaMatrix C(3, 2);
+	C.setData({ 11, 12, 13, 14, 15, 16 });
+
+	cudaMatrix D(3, 3);
+	D.setData({ 17, 18, 19, 20, 21, 22, 23, 24, 25 });
+
+	// 定义 O 矩阵（例如，全零矩阵）
+	cudaMatrix O = cudaMatrix::zeros(2, 2);
+
+	// 将子矩阵放入块矩阵中
+	std::vector<std::vector<cudaMatrix>> blocks = {
+		{A, B},
+		{C, D}
+	};
+
+	// 使用 assembleBlocks 方法组合矩阵
+	cudaMatrix assembledMatrix = cudaMatrix::assembleBlocks(blocks);
+
+	// 打印结果矩阵
+	std::cout << "Assembled Matrix:" << std::endl;
+	assembledMatrix.printData();
+
+	// 使用 O 矩阵作为占位符
+	std::vector<std::vector<cudaMatrix>> blocksWithO = {
+		{A, O},
+		{O, D}
+	};
+
+	// 重新组合矩阵
+	cudaMatrix assembledMatrixWithO = cudaMatrix::assembleBlocks(blocksWithO);
+
+	// 打印包含 O 矩阵的结果
+	std::cout << "\nAssembled Matrix with O Matrix:" << std::endl;
+	assembledMatrixWithO.printData();
 	system("pause");
 	return 0;
 }

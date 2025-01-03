@@ -13,6 +13,3 @@
 #define __noinline__ __location__(noinline)
 #define __forceinline__ __location__(forceinline)
 #define __align__(x) __location__(align(x))
-#define va_start __crt_va_start(a, f)
-#define va_end __crt_va_end(a)
-#define va_arg __crt_va_arg(a, t)

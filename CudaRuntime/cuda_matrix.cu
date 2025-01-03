@@ -234,15 +234,15 @@ static dim3 autoSetBlockSize2D(T func, int rows, int cols) {
 	return dim3(blockDimX, blockDimY);
 }
 
-static void findMax(const std::vector<float>& data, int start, int end, float& max_value, std::mutex& mtx) {
-	float local_max = -std::numeric_limits<float>::infinity();
+static void findMax(const vector<float>& data, int start, int end, float& max_value, mutex& mtx) {
+	float local_max = -numeric_limits<float>::infinity();
 	for (int i = start; i < end; ++i) {
 		if (data[i] > local_max) {
 			local_max = data[i];
 		}
 	}
 	// 使用互斥锁保护对全局最大值的更新
-	std::lock_guard<std::mutex> lock(mtx);
+	std::lock_guard<mutex> lock(mtx);
 	if (local_max > max_value) {
 		max_value = local_max;
 	}
@@ -357,6 +357,12 @@ cudaMatrix::~cudaMatrix() {
 	cudaFree(data);
 	rows = 0;
 	cols = 0;
+}
+
+cudaMatrix cudaMatrix::fromFloat(float value) {
+	cudaMatrix result(1);
+	cudaMemcpy(result.data, &value, sizeof(float), cudaMemcpyHostToDevice);
+	return result;
 }
 
 void cudaMatrix::resize(int rows, int cols) {
@@ -526,6 +532,22 @@ bool cudaMatrix::operator>=(const cudaMatrix& B) {
 	return data[0] >= B.data[0];
 }
 
+void cudaMatrix::add(cudaMatrix& B) {
+	if (rows != B.rows || cols != B.cols) {
+		throw invalid_argument("矩阵维度不匹配，无法相加。");
+	}
+	cublasHandle_t handle;
+	cublasCreate_v2(&handle);
+	const float alpha = 1.0f;
+	const float beta = 1.0f;
+	cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N,
+		rows, cols,
+		&alpha, data, rows,
+		&beta, B.data, B.rows,
+		data, rows);
+	cublasDestroy_v2(handle);
+}
+
 cudaMatrix cudaMatrix::add(cudaMatrix& A, cudaMatrix& B) {
 	if (A.rows != B.rows || A.cols != B.cols) {
 		throw invalid_argument("矩阵维度不匹配，无法相加。");
@@ -549,20 +571,24 @@ cudaMatrix cudaMatrix::add(cudaMatrix& A, cudaMatrix& B) {
 cudaMatrix cudaMatrix::operator+(cudaMatrix& B) { return add(*this, B); }
 
 cudaMatrix cudaMatrix::operator+=(const cudaMatrix& B) {
+	this->add(const_cast<cudaMatrix&>(B));
+	return *this;
+}
+
+void cudaMatrix::subtract(cudaMatrix& B) {
 	if (rows != B.rows || cols != B.cols) {
-		throw invalid_argument("矩阵维度不匹配，无法相加。");
+		throw invalid_argument("矩阵维度不匹配，无法相减。");
 	}
 	cublasHandle_t handle;
 	cublasCreate_v2(&handle);
 	const float alpha = 1.0f;
-	const float beta = 1.0f;
+	const float beta = -1.0f;
 	cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N,
 		rows, cols,
 		&alpha, data, rows,
 		&beta, B.data, B.rows,
 		data, rows);
 	cublasDestroy_v2(handle);
-	return *this;
 }
 
 cudaMatrix cudaMatrix::subtract(const cudaMatrix& A, const cudaMatrix& B) {
@@ -588,20 +614,38 @@ cudaMatrix cudaMatrix::subtract(const cudaMatrix& A, const cudaMatrix& B) {
 cudaMatrix cudaMatrix::operator-(const cudaMatrix& B) { return subtract(*this, B); }
 
 cudaMatrix cudaMatrix::operator-=(const cudaMatrix& B) {
-	if (rows != B.rows || cols != B.cols) {
-		throw invalid_argument("矩阵维度不匹配，无法相减。");
+	this->subtract(const_cast<cudaMatrix&>(B));
+	return *this;
+}
+
+void cudaMatrix::multiply(cudaMatrix& B) {
+	if (rows == 1 && cols == 1) {
+		cublasHandle_t handle;
+		cublasCreate_v2(&handle);
+		cublasSscal_v2(handle, rows * cols, data, B.data, 1);
+		cublasDestroy_v2(handle);
+		return;
 	}
+	if (cols != B.rows) {
+		throw invalid_argument("矩阵维度不匹配，无法相乘。");
+	}
+	cudaMatrix temp(rows, B.cols);
+	cudaMatrix tempA = transpose();
+	cudaMatrix tempB = B.transpose();
 	cublasHandle_t handle;
 	cublasCreate_v2(&handle);
 	const float alpha = 1.0f;
-	const float beta = -1.0f;
-	cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N,
-		rows, cols,
-		&alpha, data, rows,
-		&beta, B.data, B.rows,
-		data, rows);
+	const float beta = 0.0f;
+	cublasSgemm_v2(handle, CUBLAS_OP_N, CUBLAS_OP_N,
+		rows, B.cols, cols,
+		&alpha, tempA.data, tempA.cols,
+		tempB.data, tempB.cols,
+		&beta, temp.data, temp.rows);
+	int tmp = temp.cols;
+	temp.cols = temp.rows;
+	temp.rows = tmp;
+	cudaMemcpy(data, temp.transpose().data, static_cast<size_t>(rows) * cols * sizeof(float), cudaMemcpyDeviceToDevice);
 	cublasDestroy_v2(handle);
-	return *this;
 }
 
 cudaMatrix cudaMatrix::multiply(const cudaMatrix& A, const cudaMatrix& B) { // 请不要管这里，这里是屎山
@@ -641,49 +685,15 @@ cudaMatrix operator*(const cudaMatrix& A, const cudaMatrix& B) { return cudaMatr
 
 cudaMatrix operator*(float scalar, const cudaMatrix& A) { return A.scalarMultiply(scalar); }
 
-cudaMatrix operator*(const cudaMatrix& A, float scalar) { return A.scalarMultiply(scalar); }
+cudaMatrix operator*(const cudaMatrix& A, const float scalar) { return A.scalarMultiply(scalar); }
 
 cudaMatrix cudaMatrix::operator*=(const cudaMatrix& B) {
-	if (cols != B.rows) {
-		throw invalid_argument("矩阵维度不匹配，无法相乘。");
-	}
-	if (B.cols == 1 && B.rows == 1) {
-		cublasHandle_t handle;
-		cublasCreate_v2(&handle);
-		cublasSscal_v2(handle, rows * cols, B.data, data, 1);
-		cublasDestroy_v2(handle);
-		return *this;
-	}
-	if (rows != B.cols) {
-		cudaFree(data);
-		cols = B.cols;
-		cudaMalloc((void**)&data, static_cast<size_t>(rows) * cols * sizeof(float));
-	}
-	cudaMatrix temp(rows, B.cols);
-	cudaMatrix tempA = transpose();
-	cudaMatrix tempB = B.transpose();
-	cublasHandle_t handle;
-	cublasCreate_v2(&handle);
-	const float alpha = 1.0f;
-	const float beta = 0.0f;
-	cublasSgemm_v2(handle, CUBLAS_OP_N, CUBLAS_OP_N,
-		rows, B.cols, cols,
-		&alpha, tempA.data, tempA.cols,
-		tempB.data, tempB.cols,
-		&beta, temp.data, temp.rows);
-	int tmp = temp.cols;
-	temp.cols = temp.rows;
-	temp.rows = tmp;
-	cudaMemcpy(data, temp.transpose().data, static_cast<size_t>(rows) * cols * sizeof(float), cudaMemcpyDeviceToDevice);
-	cublasDestroy_v2(handle);
+	this->multiply(const_cast<cudaMatrix&>(B));
 	return *this;
 }
 
 cudaMatrix cudaMatrix::operator*=(const float scalar) {
-	cublasHandle_t handle;
-	cublasCreate_v2(&handle);
-	cublasSscal_v2(handle, rows * cols, &scalar, data, 1);
-	cublasDestroy_v2(handle);
+	this->scalarMultiply(scalar);
 	return *this;
 }
 
@@ -969,7 +979,7 @@ cudaMatrix cudaMatrix::diag(vector<int> offset, ...) {
 	va_list args;
 	va_start(args, offset);
 	vector<vector<float>> arg(num);
-	for (int i = 0; i < num; ++i) {
+	for (int i = 0; i < num; i++) {
 		arg[i] = va_arg(args, vector<float>);
 		if (arg[i].data() == nullptr)
 			throw invalid_argument("输入矩阵指针为空。");
@@ -1006,4 +1016,94 @@ cudaMatrix::ElementProxy::operator float() const { return mat.get(row, col); }
 cudaMatrix::ElementProxy& cudaMatrix::ElementProxy::operator=(float value) {
 	mat.set(row, col, value);
 	return *this;
+}
+
+cudaMatrix cudaMatrix::assembleBlocks(vector<vector<cudaMatrix>>& blocks) {
+	if (blocks.empty()) {
+		throw std::invalid_argument("Blocks cannot be empty");
+	}
+
+	int numBlockRows = blocks.size();
+	int numBlockCols = blocks[0].size();
+
+	// 检查所有行是否具有相同数量的块
+	for (int i = 0; i < numBlockRows; ++i) {
+		if (blocks[i].size() != numBlockCols) {
+			throw std::invalid_argument("All rows must have the same number of blocks");
+		}
+	}
+
+	// 自动规划每个块的大小
+	// 首先，找到每行中块的最大行数和每列中块的最大列数
+	vector<int> maxBlockRows(numBlockRows, 0);
+	vector<int> maxBlockCols(numBlockCols, 0);
+
+	// 计算每行的最大行数和每列的最大列数
+	for (int i = 0; i < numBlockRows; ++i) {
+		for (int j = 0; j < numBlockCols; ++j) {
+			int blockRows = blocks[i][j].getRows();
+			int blockCols = blocks[i][j].getCols();
+
+			if (blockRows > maxBlockRows[i]) {
+				maxBlockRows[i] = blockRows;
+			}
+			if (blockCols > maxBlockCols[j]) {
+				maxBlockCols[j] = blockCols;
+			}
+		}
+	}
+
+	// 调整每个块的大小，使其匹配最大尺寸
+	for (int i = 0; i < numBlockRows; ++i) {
+		for (int j = 0; j < numBlockCols; ++j) {
+			blocks[i][j].resize(maxBlockRows[i], maxBlockCols[j]);
+		}
+	}
+
+	// 计算总行数和总列数
+	int totalRows = 0;
+	for (int i = 0; i < numBlockRows; ++i) {
+		totalRows += maxBlockRows[i];
+	}
+
+	int totalCols = 0;
+	for (int j = 0; j < numBlockCols; ++j) {
+		totalCols += maxBlockCols[j];
+	}
+
+	// 创建结果矩阵
+	cudaMatrix result(totalRows, totalCols);
+
+	// 将块复制到结果矩阵中
+	int rowOffset = 0;
+	for (int i = 0; i < numBlockRows; ++i) {
+		int colOffset = 0;
+		for (int j = 0; j < numBlockCols; ++j) {
+			const cudaMatrix& block = blocks[i][j];
+			int blockRows = block.getRows();
+			int blockCols = block.getCols();
+
+			const float* srcData = block.getDataPtr();
+			float* destData = result.getDataPtr() + (rowOffset * totalCols + colOffset);
+
+			size_t srcPitch = blockCols * sizeof(float);
+			size_t destPitch = totalCols * sizeof(float);
+			size_t widthInBytes = blockCols * sizeof(float);
+			size_t height = blockRows;
+
+			// 将块数据复制到结果矩阵的适当位置
+			cudaError_t err = cudaMemcpy2D(destData, destPitch,
+				srcData, srcPitch,
+				widthInBytes, height,
+				cudaMemcpyDeviceToDevice);
+			if (err != cudaSuccess) {
+				throw runtime_error("cudaMemcpy2D failed: " + string(cudaGetErrorString(err)));
+			}
+
+			colOffset += blockCols;
+		}
+		rowOffset += maxBlockRows[i];
+	}
+
+	return result;
 }

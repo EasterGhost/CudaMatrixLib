@@ -16,6 +16,14 @@
 #define NUM_THREADS 96
 #endif // !NUM_THREADS
 
+#ifndef pi
+#define pi 3.1415926535897932384626433832795
+#endif // !pi
+
+//#ifndef O(rows, cols)
+//#define O(rows, cols) cudaMatrix(rows, cols)
+//#endif // !O
+
 #ifndef FORCE_SAFE_SIZE
 #define FORCE_SAFE_SIZE true
 #endif // !FORCE_SAFE_SIZE
@@ -37,7 +45,8 @@
 #include <curand_kernel.h>
 #include <device_launch_parameters.h>
 #include <sm_20_intrinsics.h>
-#include <device_double_functions.h>
+//#include <device_double_functions.h>
+//#include <device_atomic_functions.hpp>
 #include <cublas_v2.h>
 #include <cusolverDn.h>
 #include <iostream>
@@ -180,6 +189,8 @@ public:
 	*/
 	~cudaMatrix();
 
+	static cudaMatrix fromFloat(float value);
+
 	void resize(int rows, int cols);
 
 	static cudaMatrix zeros(int rows, int cols);
@@ -310,6 +321,8 @@ public:
 	 */
 	bool operator >= (const cudaMatrix& B);
 
+	void add(cudaMatrix& B);
+
 	/**
 	* @brief 矩阵加法静态方法
 	* @param A 矩阵 A
@@ -334,6 +347,8 @@ public:
 	*/
 	cudaMatrix operator += (const cudaMatrix& B);
 
+	void subtract(cudaMatrix& B);
+
 	/**
 	* @brief 矩阵减法静态方法
 	* @param A 矩阵 A
@@ -357,6 +372,13 @@ public:
 	cudaMatrix operator -= (const cudaMatrix& B);
 
 	/**
+	 * @brief 矩阵乘法
+	 * @param B
+	 * @throw invalid_argument 如果 A 的列数不等于 B 的行数
+	 */
+	void multiply(cudaMatrix& B);
+
+	/**
 	* @brief 矩阵乘法静态方法
 	* @param A 矩阵 A
 	* @param B 矩阵 B
@@ -375,14 +397,14 @@ public:
 
 	friend cudaMatrix operator * (const float scalar, const cudaMatrix& A);
 
-	friend cudaMatrix operator * (const cudaMatrix& A, float scalar);
+	friend cudaMatrix operator * (const cudaMatrix& A, const float scalar);
 
 	/**
 	* @brief 矩阵乘且赋值运算符重载
 	* @param B 矩阵 B
 	* @return 结果矩阵为A*B
 	*/
-	cudaMatrix operator*= (const cudaMatrix& B);
+	cudaMatrix operator *= (const cudaMatrix& B);
 
 	/**
 	* @brief 矩阵标量乘且赋值运算符重载
@@ -471,7 +493,7 @@ public:
 	/**
 	* @brief 矩阵标量除法运算符重载
 	* @param scalar 标量
-	* @return 结果矩阵为A/scalar
+	* @return 结果矩阵为1/scalar * A
 	*/
 	cudaMatrix operator / (const float scalar);
 
@@ -485,7 +507,7 @@ public:
 	/**
 	* @brief 矩阵标量除且赋值运算符重载
 	* @param scalar 标量
-	* @return 结果矩阵为A/scalar
+	* @return 结果矩阵为1/scalar * A
 	*/
 	cudaMatrix operator /= (const float scalar);
 
@@ -504,11 +526,24 @@ public:
 	*/
 	cudaMatrix operator | (cudaMatrix& b);
 
+	/**
+	 * @brief 计算矩阵行列式
+	 * @return 矩阵的行列式
+	 * @throw invalid_argument 如果 A 不是方阵
+	 */
 	float det() const;
 
+	/**
+	 * @brief 计算矩阵行列式静态方法重载
+	 * @param A 矩阵 A
+	 * @return 矩阵A的行列式
+	 * @throw invalid_argument 如果 A 不是方阵
+	 */
 	static float det(const cudaMatrix& A);
 
 	static cudaMatrix diag(vector<int> placement, ...);
+
+	static cudaMatrix assembleBlocks(vector<vector<cudaMatrix>>& blocks);
 
 	/**
 	* @brief 矩阵代理类
