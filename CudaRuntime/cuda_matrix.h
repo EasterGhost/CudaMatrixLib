@@ -20,9 +20,9 @@
 #define pi 3.1415926535897932384626433832795
 #endif // !pi
 
-//#ifndef O(rows, cols)
-//#define O(rows, cols) cudaMatrix(rows, cols)
-//#endif // !O
+#ifndef O
+#define O cudaMatrix(1)
+#endif // !O
 
 #ifndef FORCE_SAFE_SIZE
 #define FORCE_SAFE_SIZE true

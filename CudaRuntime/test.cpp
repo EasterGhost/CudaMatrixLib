@@ -17,7 +17,7 @@ int main() {
 	D.setData({ 17, 18, 19, 20, 21, 22, 23, 24, 25 });
 
 	// 定义 O 矩阵（例如，全零矩阵）
-	cudaMatrix O = cudaMatrix::zeros(2, 2);
+	//cudaMatrix O = cudaMatrix::zeros(2, 2);
 
 	// 将子矩阵放入块矩阵中
 	std::vector<std::vector<cudaMatrix>> blocks = {

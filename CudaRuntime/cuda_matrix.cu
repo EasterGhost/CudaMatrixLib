@@ -1022,59 +1022,38 @@ cudaMatrix cudaMatrix::assembleBlocks(vector<vector<cudaMatrix>>& blocks) {
 	if (blocks.empty()) {
 		throw std::invalid_argument("Blocks cannot be empty");
 	}
-
 	int numBlockRows = blocks.size();
 	int numBlockCols = blocks[0].size();
-
-	// 检查所有行是否具有相同数量的块
 	for (int i = 0; i < numBlockRows; ++i) {
 		if (blocks[i].size() != numBlockCols) {
 			throw std::invalid_argument("All rows must have the same number of blocks");
 		}
 	}
-
-	// 自动规划每个块的大小
-	// 首先，找到每行中块的最大行数和每列中块的最大列数
 	vector<int> maxBlockRows(numBlockRows, 0);
 	vector<int> maxBlockCols(numBlockCols, 0);
-
-	// 计算每行的最大行数和每列的最大列数
 	for (int i = 0; i < numBlockRows; ++i) {
 		for (int j = 0; j < numBlockCols; ++j) {
 			int blockRows = blocks[i][j].getRows();
 			int blockCols = blocks[i][j].getCols();
-
-			if (blockRows > maxBlockRows[i]) {
+			if (blockRows > maxBlockRows[i])
 				maxBlockRows[i] = blockRows;
-			}
-			if (blockCols > maxBlockCols[j]) {
+			if (blockCols > maxBlockCols[j])
 				maxBlockCols[j] = blockCols;
-			}
 		}
 	}
-
-	// 调整每个块的大小，使其匹配最大尺寸
 	for (int i = 0; i < numBlockRows; ++i) {
 		for (int j = 0; j < numBlockCols; ++j) {
 			blocks[i][j].resize(maxBlockRows[i], maxBlockCols[j]);
 		}
 	}
-
-	// 计算总行数和总列数
 	int totalRows = 0;
 	for (int i = 0; i < numBlockRows; ++i) {
 		totalRows += maxBlockRows[i];
 	}
-
 	int totalCols = 0;
-	for (int j = 0; j < numBlockCols; ++j) {
+	for (int j = 0; j < numBlockCols; ++j)
 		totalCols += maxBlockCols[j];
-	}
-
-	// 创建结果矩阵
 	cudaMatrix result(totalRows, totalCols);
-
-	// 将块复制到结果矩阵中
 	int rowOffset = 0;
 	for (int i = 0; i < numBlockRows; ++i) {
 		int colOffset = 0;
@@ -1082,16 +1061,12 @@ cudaMatrix cudaMatrix::assembleBlocks(vector<vector<cudaMatrix>>& blocks) {
 			const cudaMatrix& block = blocks[i][j];
 			int blockRows = block.getRows();
 			int blockCols = block.getCols();
-
 			const float* srcData = block.getDataPtr();
 			float* destData = result.getDataPtr() + (rowOffset * totalCols + colOffset);
-
 			size_t srcPitch = blockCols * sizeof(float);
 			size_t destPitch = totalCols * sizeof(float);
 			size_t widthInBytes = blockCols * sizeof(float);
 			size_t height = blockRows;
-
-			// 将块数据复制到结果矩阵的适当位置
 			cudaError_t err = cudaMemcpy2D(destData, destPitch,
 				srcData, srcPitch,
 				widthInBytes, height,
@@ -1099,11 +1074,9 @@ cudaMatrix cudaMatrix::assembleBlocks(vector<vector<cudaMatrix>>& blocks) {
 			if (err != cudaSuccess) {
 				throw runtime_error("cudaMemcpy2D failed: " + string(cudaGetErrorString(err)));
 			}
-
 			colOffset += blockCols;
 		}
 		rowOffset += maxBlockRows[i];
 	}
-
 	return result;
 }
