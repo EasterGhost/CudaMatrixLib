@@ -125,13 +125,13 @@
     <None Include="F:\LiMuchen\numerial\W2\T1\conjugate_gradient.m" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <CudaCompile Include="cuda_matrix.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cuda_matrix.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

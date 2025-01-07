@@ -21,7 +21,7 @@
 #endif // !pi
 
 #ifndef O
-#define O cudaMatrix(1)
+#define O cudaMatrix<data_type>(1)
 #endif // !O
 
 #ifndef FORCE_SAFE_SIZE
@@ -102,15 +102,16 @@ static dim3 autoSetBlockSize2D(T func, int rows, int cols);
 
 /**
 * @brief CUDA 行优先矩阵类
-* @class cudaMatrix
+* @class cudaMatrix<data_type>
 * @note 仅支持 float 类型
 * @note 使用 cuBLAS 实现部分矩阵运算
 */
+template<typename data_type>
 class cudaMatrix {
 private:
 	int rows; /// 行数
 	int cols; /// 列数
-	float* data; /// 数据指针
+	data_type* data; /// 数据指针
 
 	/**
 	* @brief 向量按指定长度扩展为矩阵
@@ -120,7 +121,7 @@ private:
 	* @return 结果矩阵
 	* @note 支持1x1向量扩展
 	*/
-	static cudaMatrix vectorBroadcast2Matrix(const cudaMatrix& sourceVector, const int rows, const int cols);
+	static cudaMatrix<data_type> vectorBroadcast2Matrix(const cudaMatrix<data_type>& sourceVector, const int rows, const int cols);
 
 	/**
 	* @brief 矩阵点乘
@@ -131,7 +132,7 @@ private:
 	* @note 使用 cuBLAS 实现
 	* @note 会创建新的矩阵，原矩阵不变。该方法不会释放原矩阵的内存
 	*/
-	static cudaMatrix matrixDOTmatrix(const cudaMatrix& A, const cudaMatrix& B);
+	static cudaMatrix<data_type> matrixDOTmatrix(const cudaMatrix<data_type>& A, const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵标量乘法
@@ -140,7 +141,7 @@ private:
 	* @note 使用 cuBLAS 实现
 	* @note 会创建新的矩阵，原矩阵不变。该方法不会释放原矩阵的内存
 	*/
-	cudaMatrix scalarMultiply(float scalar) const;
+	cudaMatrix<data_type> scalarMultiply(data_type scalar) const;
 public:
 	/**
 	* @brief 默认构造函数
@@ -181,7 +182,7 @@ public:
 	 * @param[in] other 源矩阵
 	 * @note 深拷贝
 	 */
-	cudaMatrix(const cudaMatrix& other);
+	cudaMatrix(const cudaMatrix<data_type>& other);
 
 	/**
 	* @brief 析构函数
@@ -189,29 +190,29 @@ public:
 	*/
 	~cudaMatrix();
 
-	static cudaMatrix fromFloat(float value);
+	static cudaMatrix<data_type> fromValue(data_type value);
 
 	void resize(int rows, int cols);
 
-	static cudaMatrix zeros(int rows, int cols);
+	static cudaMatrix<data_type> zeros(int rows, int cols);
 
-	static cudaMatrix zeros(int size);
+	static cudaMatrix<data_type> zeros(int size);
 
-	static cudaMatrix ones(int rows, int cols);
+	static cudaMatrix<data_type> ones(int rows, int cols);
 
-	static cudaMatrix ones(int size);
+	static cudaMatrix<data_type> ones(int size);
 
-	static cudaMatrix identity(int size);
+	static cudaMatrix<data_type> identity(int size);
 
-	static cudaMatrix random(int rows, int cols);
+	static cudaMatrix<data_type> random(int rows, int cols);
 
-	static cudaMatrix random(int size);
+	static cudaMatrix<data_type> random(int size);
 
 	/**
 	* @brief 矩阵赋值运算符重载
 	* @return 结果矩阵为B
 	*/
-	cudaMatrix operator = (const cudaMatrix& B);
+	cudaMatrix<data_type> operator = (const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵按索引赋值
@@ -219,13 +220,13 @@ public:
 	* @param[in] col 列索引
 	* @param[in] value 数据值
 	*/
-	void set(int row, int col, float value);
+	void set(int row, int col, data_type value);
 
 	/**
 	* @brief 设置矩阵数据
 	* @param[in] v 数据向量
 	*/
-	void setData(const vector<float> v);
+	void setData(const vector<data_type>& v);
 
 	/**
 	* @brief 按索引获取矩阵数据
@@ -233,19 +234,19 @@ public:
 	* @param[in] col 列索引
 	* @return 数据值
 	*/
-	float get(int row, int col) const;
+	data_type get(int row, int col) const;
 
 	/**
 	* @brief 获取矩阵数据
 	* @param[out] v 数据向量
 	*/
-	void getData(vector<float>& v, ...) const;
+	void getData(vector<data_type>& v, ...) const;
 
 	/**
 	* @brief 获取矩阵数据指针
 	* @return 数据指针
 	*/
-	float* getDataPtr() const;
+	data_type* getDataPtr() const;
 
 	/**
 	* @brief 获取矩阵行数
@@ -275,53 +276,53 @@ public:
 	 * @brief float 类型转换运算符重载
 	 * @return float 类型数据
 	 */
-	operator float() const;
+	operator data_type() const;
 
 	/**
 	 * @brief < 运算符重载
 	 * @param n 待比较的数
 	 * @param B 待比较的矩阵
 	 */
-	bool operator < (const float n);
-	bool operator < (const cudaMatrix& B);
+	bool operator < (const data_type n);
+	bool operator < (const cudaMatrix<data_type>& B);
 
 	/**
 	 * @brief <= 运算符重载
 	 * @param n 待比较的数
 	 */
-	bool operator <= (const float n);
+	bool operator <= (const data_type n);
 
 	/**
 	 * @brief <= 运算符重载
 	 * @param B 待比较的1x1矩阵型浮点数
 	 */
-	bool operator <= (const cudaMatrix& B);
+	bool operator <= (const cudaMatrix<data_type>& B);
 
 	/**
 	 * @brief == 运算符重载
 	 * @param n 待比较的数
 	 */
-	bool operator > (const float n);
+	bool operator > (const data_type n);
 
 	/**
 	 * @brief == 运算符重载
 	 * @param B 待比较的1x1矩阵型浮点数
 	 */
-	bool operator > (const cudaMatrix& B);
+	bool operator > (const cudaMatrix<data_type>& B);
 
 	/**
 	 * @brief >= 运算符重载
 	 * @param n 待比较的数
 	 */
-	bool operator >= (const float n);
+	bool operator >= (const data_type n);
 
 	/**
 	 * @brief >= 运算符重载
 	 * @param B 待比较的1x1矩阵型浮点数
 	 */
-	bool operator >= (const cudaMatrix& B);
+	bool operator >= (const cudaMatrix<data_type>& B);
 
-	void add(cudaMatrix& B);
+	void add(const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵加法静态方法
@@ -332,22 +333,22 @@ public:
 	* @note 使用 cuBLAS 实现
 	* @note 会创建新的矩阵，原矩阵不变。该方法不会释放原矩阵的内存
 	*/
-	static cudaMatrix add(cudaMatrix& A, cudaMatrix& B);
+	static cudaMatrix<data_type> add(const cudaMatrix<data_type>& A, const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵加法运算符重载
 	* @param B 矩阵 B
 	* @return 结果矩阵为A+B
 	* */
-	cudaMatrix operator + (cudaMatrix& B);
+	cudaMatrix<data_type> operator + (const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵加且赋值运算符重载
 	* @return 结果矩阵为A+B
 	*/
-	cudaMatrix operator += (const cudaMatrix& B);
+	cudaMatrix<data_type> operator += (const cudaMatrix<data_type>& B);
 
-	void subtract(cudaMatrix& B);
+	void subtract(const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵减法静态方法
@@ -355,28 +356,28 @@ public:
 	* @param B 矩阵 B
 	* @return 结果矩阵为A-B
 	*/
-	static cudaMatrix subtract(const cudaMatrix& A, const cudaMatrix& B);
+	static cudaMatrix<data_type> subtract(const cudaMatrix<data_type>& A, const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵减法运算符重载
 	* @param B 矩阵 B
 	* @return 结果矩阵为A-B
 	*/
-	cudaMatrix operator - (const cudaMatrix& B);
+	cudaMatrix<data_type> operator - (const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵减法运算符重载
 	* @param B 矩阵 B
 	* @return 结果矩阵为A-B
 	*/
-	cudaMatrix operator -= (const cudaMatrix& B);
+	cudaMatrix<data_type> operator -= (const cudaMatrix<data_type>& B);
 
 	/**
 	 * @brief 矩阵乘法
 	 * @param B
 	 * @throw invalid_argument 如果 A 的列数不等于 B 的行数
 	 */
-	void multiply(cudaMatrix& B);
+	void multiply(cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵乘法静态方法
@@ -387,45 +388,45 @@ public:
 	* @note 使用 cuBLAS 实现
 	* @note 会创建新的矩阵，原矩阵不变。该方法不会释放原矩阵的内存
 	*/
-	static cudaMatrix multiply(const cudaMatrix& A, const cudaMatrix& B);
+	static cudaMatrix<data_type> multiply(const cudaMatrix<data_type>& A, const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵乘法运算符重载
 	* @return 结果矩阵为A*B
 	*/
-	friend cudaMatrix operator * (const cudaMatrix& A, const cudaMatrix& B);
+	friend cudaMatrix<data_type> operator * (const cudaMatrix<data_type>& A, const cudaMatrix<data_type>& B);
 
-	friend cudaMatrix operator * (const float scalar, const cudaMatrix& A);
+	friend cudaMatrix<data_type> operator * (const data_type scalar, const cudaMatrix<data_type>& A);
 
-	friend cudaMatrix operator * (const cudaMatrix& A, const float scalar);
+	friend cudaMatrix<data_type> operator * (const cudaMatrix<data_type>& A, const data_type scalar);
 
 	/**
 	* @brief 矩阵乘且赋值运算符重载
 	* @param B 矩阵 B
 	* @return 结果矩阵为A*B
 	*/
-	cudaMatrix operator *= (const cudaMatrix& B);
+	cudaMatrix<data_type> operator *= (const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵标量乘且赋值运算符重载
 	* @param scalar 标量
 	* @return 结果矩阵为A*scalar
 	*/
-	cudaMatrix operator *= (const float scalar);
+	cudaMatrix<data_type> operator *= (const data_type scalar);
 
 	/**
 	* @brief 矩阵幂运算符重载
 	* @param pows 幂次
 	* @return 结果矩阵为A^pows
 	*/
-	cudaMatrix operator ^ (int pows);
+	cudaMatrix<data_type> operator ^ (int pows);
 
 	/**
 	* @brief 矩阵幂且赋值运算符重载
 	* @param pows 幂次
 	* @return 结果矩阵为A^pows
 	*/
-	cudaMatrix operator ^= (int pows);
+	cudaMatrix<data_type> operator ^= (int pows);
 
 	/**
 	* @brief 矩阵转置
@@ -433,33 +434,33 @@ public:
 	* @note 使用 cuBLAS 实现
 	* @note 会创建新的矩阵，原矩阵不变。该方法不会释放原矩阵的内存
 	*/
-	cudaMatrix transpose() const;
+	cudaMatrix<data_type> transpose() const;
 
 	/**
 	* @brief 矩阵转置静态方法重载
 	* @param A 矩阵 A
 	* @return 转置后的矩阵
 	*/
-	static cudaMatrix transpose(const cudaMatrix& A);
+	static cudaMatrix<data_type> transpose(const cudaMatrix<data_type>& A);
 
 	/**
 	* @brief 矩阵转置~运算符重载
 	* @return 转置后的矩阵
 	*/
-	cudaMatrix operator ~ () const;
+	cudaMatrix<data_type> operator ~ () const;
 
 	/**
 	* @brief 矩阵求迹
 	* @return 矩阵的迹
 	*/
-	float trace() const;
+	data_type trace() const;
 
 	/**
 	* @brief 矩阵求迹静态方法重载
 	* @param A 矩阵 A
 	* @return 矩阵A的迹
 	*/
-	static float trace(const cudaMatrix& A);
+	static data_type trace(const cudaMatrix<data_type>& A);
 
 	/**
 	* @brief 矩阵点乘
@@ -469,9 +470,9 @@ public:
 	* @return 结果矩阵为A.*B
 	* @throw invalid_argument 如果 A 和 B 的维度不匹配
 	*/
-	static cudaMatrix dot(const cudaMatrix& A, const cudaMatrix& B);
-	static cudaMatrix dot(const float scalar, const cudaMatrix& A);
-	static cudaMatrix dot(const cudaMatrix& A, const float scalar);
+	static cudaMatrix<data_type> dot(const cudaMatrix<data_type>& A, const cudaMatrix<data_type>& B);
+	static cudaMatrix<data_type> dot(const data_type scalar, const cudaMatrix<data_type>& A);
+	static cudaMatrix<data_type> dot(const cudaMatrix<data_type>& A, const data_type scalar);
 
 	/**
 	* @brief 矩阵标量除法
@@ -480,7 +481,7 @@ public:
 	* @return 结果矩阵为A./B
 	* @throw invalid_argument 如果 A 和 B 的维度不匹配
 	*/
-	static cudaMatrix divide(const cudaMatrix& A, const cudaMatrix& B);
+	static cudaMatrix<data_type> divide(const cudaMatrix<data_type>& A, const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵除法运算符重载
@@ -488,28 +489,28 @@ public:
 	* @return 结果矩阵为A./B
 	* @throw invalid_argument 如果 A 和 B 的维度不匹配
 	*/
-	cudaMatrix operator / (const cudaMatrix& B);
+	cudaMatrix<data_type> operator / (const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵标量除法运算符重载
 	* @param scalar 标量
 	* @return 结果矩阵为1/scalar * A
 	*/
-	cudaMatrix operator / (const float scalar);
+	cudaMatrix<data_type> operator / (const data_type scalar);
 
 	/**
 	* @brief 矩阵除且赋值运算符重载
 	* @param B 矩阵 B
 	* @return 结果矩阵为A./B
 	*/
-	cudaMatrix operator /= (const cudaMatrix& B);
+	cudaMatrix<data_type> operator /= (const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵标量除且赋值运算符重载
 	* @param scalar 标量
 	* @return 结果矩阵为1/scalar * A
 	*/
-	cudaMatrix operator /= (const float scalar);
+	cudaMatrix<data_type> operator /= (const data_type scalar);
 
 	/**
 	* @brief 解稀疏线性方程组
@@ -517,21 +518,21 @@ public:
 	* @param b 常数向量
 	* @return 结果矩阵为A\b
 	*/
-	static cudaMatrix solveSparseSLE(cudaMatrix& A, cudaMatrix& b);
+	static cudaMatrix<data_type> solveSparseSLE(cudaMatrix<data_type>& A, cudaMatrix<data_type>& b);
 
 	/**
 	* @brief | 运算符重载为解稀疏线性方程组
 	* @param b 常数向量
 	* @return 结果矩阵为A\b
 	*/
-	cudaMatrix operator | (cudaMatrix& b);
+	cudaMatrix<data_type> operator | (cudaMatrix<data_type>& b);
 
 	/**
 	 * @brief 计算矩阵行列式
 	 * @return 矩阵的行列式
 	 * @throw invalid_argument 如果 A 不是方阵
 	 */
-	float det() const;
+	data_type det() const;
 
 	/**
 	 * @brief 计算矩阵行列式静态方法重载
@@ -539,11 +540,20 @@ public:
 	 * @return 矩阵A的行列式
 	 * @throw invalid_argument 如果 A 不是方阵
 	 */
-	static float det(const cudaMatrix& A);
+	static data_type det(const cudaMatrix<data_type>& A);
 
-	static cudaMatrix diag(vector<int> placement, ...);
+	/**
+	* @brief 生成对角矩阵
+	* @param[in] placement 对角线位置
+	* @param[in] ... 对角线元素向量
+	* @return 对角矩阵
+	* @warning placement请勿使用引用
+	*/
+	static cudaMatrix<data_type> diag(const vector<int> placement, ...);
 
-	static cudaMatrix assembleBlocks(vector<vector<cudaMatrix>>& blocks);
+	static cudaMatrix<data_type> assembleBlocks(vector<vector<cudaMatrix<data_type>>>& blocks);
+
+	static cudaMatrix<data_type> setdiff(const cudaMatrix<data_type>& A, const cudaMatrix<data_type>& B);
 
 	/**
 	* @brief 矩阵代理类
@@ -551,7 +561,7 @@ public:
 	*/
 	class ElementProxy {
 	private:
-		cudaMatrix& mat;
+		cudaMatrix<data_type>& mat;
 		int row;
 		int col;
 
@@ -562,7 +572,7 @@ public:
 		 * @param row 矩阵行索引
 		 * @param col 矩阵列索引
 		 */
-		ElementProxy(cudaMatrix& mat, int row, int col) : mat(mat), row(row), col(col) {}
+		ElementProxy(cudaMatrix<data_type>& mat, int row, int col) : mat(mat), row(row), col(col) {}
 
 		/**
 		 * @brief 代理类析构函数
