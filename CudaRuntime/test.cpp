@@ -1,49 +1,36 @@
-// 测试文件：test_assemble_blocks.cpp
-
+#include <iostream>
+#include <vector>
 #include "cuda_matrix.h"
 
+using namespace std;
+
 int main() {
-	// 创建子矩阵 A, B, C, D
-	cudaMatrix A(2, 2);
-	A.setData({ 1, 2, 3, 4 });
+	// 初始化CUDA设备
+	cudaSetDevice(0);
 
-	cudaMatrix B(2, 3);
-	B.setData({ 5, 6, 7, 8, 9, 10 });
+	// 定义两个矩阵A和B
+	vector<float> hostA = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f };
+	vector<float> hostB = { 3.0f, 4.0f, 6.0f };
 
-	cudaMatrix C(3, 2);
-	C.setData({ 11, 12, 13, 14, 15, 16 });
+	// 将数据从主机复制到设备
+	cudaMatrix A(1, hostA.size());
+	cudaMatrix B(1, hostB.size());
+	A.setData(hostA);
+	B.setData(hostB);
 
-	cudaMatrix D(3, 3);
-	D.setData({ 17, 18, 19, 20, 21, 22, 23, 24, 25 });
+	// 调用setdiff函数
+	cudaMatrix result = cudaMatrix::setdiff(A, B);
 
-	// 定义 O 矩阵（例如，全零矩阵）
-	//cudaMatrix O = cudaMatrix::zeros(2, 2);
+	// 将结果从设备复制到主机
+	vector<float> hostResult(result.getCols());
+	result.getData(hostResult);
 
-	// 将子矩阵放入块矩阵中
-	std::vector<std::vector<cudaMatrix>> blocks = {
-		{A, B},
-		{C, D}
-	};
-
-	// 使用 assembleBlocks 方法组合矩阵
-	cudaMatrix assembledMatrix = cudaMatrix::assembleBlocks(blocks);
-
-	// 打印结果矩阵
-	std::cout << "Assembled Matrix:" << std::endl;
-	assembledMatrix.printData();
-
-	// 使用 O 矩阵作为占位符
-	std::vector<std::vector<cudaMatrix>> blocksWithO = {
-		{A, O},
-		{O, D}
-	};
-
-	// 重新组合矩阵
-	cudaMatrix assembledMatrixWithO = cudaMatrix::assembleBlocks(blocksWithO);
-
-	// 打印包含 O 矩阵的结果
-	std::cout << "\nAssembled Matrix with O Matrix:" << std::endl;
-	assembledMatrixWithO.printData();
+	// 打印结果
+	cout << "Result of setdiff(A, B): ";
+	for (float val : hostResult) {
+		cout << val << " ";
+	}
+	cout << endl;
 	system("pause");
 	return 0;
 }

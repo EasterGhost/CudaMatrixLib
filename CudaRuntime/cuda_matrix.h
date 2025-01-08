@@ -543,7 +543,9 @@ public:
 
 	static cudaMatrix diag(vector<int> placement, ...);
 
-	static cudaMatrix assembleBlocks(vector<vector<cudaMatrix>>& blocks);
+	static cudaMatrix assembleBlocks(const vector<vector<cudaMatrix>>& blocks);
+
+	static cudaMatrix setdiff(const cudaMatrix& A, const cudaMatrix& B);
 
 	/**
 	* @brief 矩阵代理类

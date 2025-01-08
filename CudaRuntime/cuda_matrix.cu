@@ -185,6 +185,25 @@ extern "C" __global__ static void row_vec_broadcast2matrix_kernel(const float* s
 	}
 }
 
+extern "C" __global__ static void setdiff_kernel(const float* A, const float* B, float* result, int sizeA, int sizeB) {
+	int idx = threadIdx.x + blockIdx.x * blockDim.x;
+	if (idx < sizeA) {
+		bool found = false;
+		for (int j = 0; j < sizeB; ++j) {
+			if (A[idx] == B[j]) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			result[idx] = A[idx];
+		}
+		else {
+			result[idx] = NAN; // Use NaN to indicate that the element is not in the result
+		}
+	}
+}
+
 static void checkCudaError(cudaError_t err, const char* msg) {
 	if (err != cudaSuccess) {
 		std::cerr << msg << ": " << cudaGetErrorString(err) << std::endl;
@@ -1018,10 +1037,11 @@ cudaMatrix::ElementProxy& cudaMatrix::ElementProxy::operator=(float value) {
 	return *this;
 }
 
-cudaMatrix cudaMatrix::assembleBlocks(vector<vector<cudaMatrix>>& blocks) {
-	if (blocks.empty()) {
+cudaMatrix cudaMatrix::assembleBlocks(const vector<vector<cudaMatrix>>& block) {
+	if (block.empty()) {
 		throw std::invalid_argument("Blocks cannot be empty");
 	}
+	vector<vector<cudaMatrix>> blocks = block;
 	int numBlockRows = blocks.size();
 	int numBlockCols = blocks[0].size();
 	for (int i = 0; i < numBlockRows; ++i) {
@@ -1079,4 +1099,25 @@ cudaMatrix cudaMatrix::assembleBlocks(vector<vector<cudaMatrix>>& blocks) {
 		rowOffset += maxBlockRows[i];
 	}
 	return result;
+}
+
+cudaMatrix cudaMatrix::setdiff(const cudaMatrix& A, const cudaMatrix& B) {
+	int sizeA = A.rows * A.cols;
+	int sizeB = B.rows * B.cols;
+	cudaMatrix result(1, sizeA);
+
+	int threadsPerBlock = autoSetBlockSize(setdiff_kernel);
+	int blocksPerGrid = (sizeA + threadsPerBlock - 1) / threadsPerBlock;
+
+	setdiff_kernel << <blocksPerGrid, threadsPerBlock >> > (A.data, B.data, result.data, sizeA, sizeB);
+
+	// Remove NaN values from the result
+	vector<float> hostResult(sizeA);
+	cudaMemcpy(hostResult.data(), result.data, sizeA * sizeof(float), cudaMemcpyDeviceToHost);
+	hostResult.erase(remove_if(hostResult.begin(), hostResult.end(), [](float val) { return isnan(val); }), hostResult.end());
+
+	cudaMatrix finalResult(1, hostResult.size());
+	cudaMemcpy(finalResult.data, hostResult.data(), hostResult.size() * sizeof(float), cudaMemcpyHostToDevice);
+
+	return finalResult;
 }
