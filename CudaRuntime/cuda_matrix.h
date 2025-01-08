@@ -57,7 +57,7 @@
 #include <thread>
 #include <limits>
 #include <mutex>
-
+#include <type_traits>
 using namespace std;
 
 /**
@@ -84,7 +84,7 @@ typedef enum __device_builtin__ MatrixType {
 * @throw runtime_error 如果设置失败
 * @note 使用 cudaOccupancyMaxPotentialBlockSize 函数设置线程块大小
 */
-template<class T>
+template<typename T>
 static int autoSetBlockSize(T func);
 
 /**
@@ -97,7 +97,7 @@ static int autoSetBlockSize(T func);
 * @throw runtime_error 如果设置失败
 * @note 使用 cudaOccupancyMaxPotentialBlockSize 函数设置线程块大小
 */
-template<class T>
+template<typename T>
 static dim3 autoSetBlockSize2D(T func, int rows, int cols);
 
 /**
@@ -182,7 +182,10 @@ public:
 	 * @param[in] other 源矩阵
 	 * @note 深拷贝
 	 */
-	cudaMatrix(const cudaMatrix<data_type>& other);
+	 //cudaMatrix(const cudaMatrix<data_type>& other);
+
+	template<typename T>
+	cudaMatrix(const cudaMatrix<T>& other);
 
 	/**
 	* @brief 析构函数
@@ -412,7 +415,8 @@ public:
 	* @param scalar 标量
 	* @return 结果矩阵为A*scalar
 	*/
-	cudaMatrix<data_type> operator *= (const data_type scalar);
+	template<typename T>
+	cudaMatrix<data_type> operator *= (const T scalar);
 
 	/**
 	* @brief 矩阵幂运算符重载
@@ -471,8 +475,10 @@ public:
 	* @throw invalid_argument 如果 A 和 B 的维度不匹配
 	*/
 	static cudaMatrix<data_type> dot(const cudaMatrix<data_type>& A, const cudaMatrix<data_type>& B);
-	static cudaMatrix<data_type> dot(const data_type scalar, const cudaMatrix<data_type>& A);
-	static cudaMatrix<data_type> dot(const cudaMatrix<data_type>& A, const data_type scalar);
+	template<typename T>
+	static cudaMatrix<data_type> dot(const T scalar, const cudaMatrix<data_type>& A);
+	template<typename T>
+	static cudaMatrix<data_type> dot(const cudaMatrix<data_type>& A, const T scalar);
 
 	/**
 	* @brief 矩阵标量除法
