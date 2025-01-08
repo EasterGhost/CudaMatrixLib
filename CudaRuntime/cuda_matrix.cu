@@ -30,7 +30,6 @@ __global__ static void fill_diag_kernel(const data_type* matrix, data_type* diag
 	}
 }
 
-template<typename data_type>
 __device__ static double atomicAdd_double(double* address, double val)
 {
 	unsigned long long int* address_as_ull =
