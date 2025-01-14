@@ -19,12 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\CudaRuntime\cuda_matrix.cu">
-      <FileType>Document</FileType>
-    </CudaCompile>
+    <CudaCompile Include="TemplateCudaMatrix.cu" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\CudaRuntime\cuda_matrix.h" />
+    <ClInclude Include="TemplateCudaMatrix.cuh" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -137,6 +135,9 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <CudaLink>
+      <PerformDeviceLinkTimeOptimization>true</PerformDeviceLinkTimeOptimization>
+    </CudaLink>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
