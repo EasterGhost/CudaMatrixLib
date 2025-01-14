@@ -122,7 +122,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
-    <None Include="F:\LiMuchen\numerial\W2\T1\conjugate_gradient.m" />
+    <None Include="F:\LiMuchen\top99.m" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="cuda_matrix.cu" />

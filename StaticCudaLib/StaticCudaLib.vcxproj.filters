@@ -15,11 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\CudaRuntime\cuda_matrix.cu">
+    <ClInclude Include="TemplateCudaMatrix.cuh">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="TemplateCudaMatrix.cu">
       <Filter>源文件</Filter>
     </CudaCompile>
-    <CudaCompile Include="..\CudaRuntime\cuda_matrix.h">
-      <Filter>头文件</Filter>
-    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

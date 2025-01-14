@@ -19,12 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\CudaRuntime\cuda_matrix.cu">
-      <FileType>Document</FileType>
-    </CudaCompile>
+    <ClInclude Include="TemplateCudaMatrix.cuh" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\CudaRuntime\cuda_matrix.h" />
+    <CudaCompile Include="TemplateCudaMatrix.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

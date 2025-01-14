@@ -547,6 +547,8 @@ public:
 
 	static cudaMatrix setdiff(const cudaMatrix& A, const cudaMatrix& B);
 
+	cudaMatrix subMatrix(const std::vector<int>& row_indices, const std::vector<int>& col_indices) const;
+
 	/**
 	* @brief 矩阵代理类
 	* @note 用于重载 () 运算符，实现矩阵元素的访问和赋值

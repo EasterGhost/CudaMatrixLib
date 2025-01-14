@@ -10,6 +10,63 @@
 */
 #include "cuda_matrix.h"
 
+extern "C" __global__ static void extractSubMatrixKernel(
+	const float* __restrict__ d_data, // 源矩阵数据指针
+	float* d_sub_data,                // 子矩阵数据指针
+	//int src_rows,                   // 源矩阵行数
+	int src_cols,                     // 源矩阵列数
+	int start_row,                    // 子矩阵起始行索引
+	int start_col,                    // 子矩阵起始列索引
+	int sub_rows,                     // 子矩阵行数
+	int sub_cols                      // 子矩阵列数
+) {
+	int tid = blockIdx.x * blockDim.x + threadIdx.x;
+	int total_elements = sub_rows * sub_cols;
+
+	if (tid < total_elements) {
+		// 计算子矩阵中的行列索引
+		int sub_row = tid / sub_cols;
+		int sub_col = tid % sub_cols;
+
+		// 对应到源矩阵中的行列索引
+		int src_row = start_row + sub_row;
+		int src_col = start_col + sub_col;
+
+		// 计算线性索引
+		int src_idx = src_row * src_cols + src_col;
+		int dst_idx = sub_row * sub_cols + sub_col;
+
+		// 复制元素
+		d_sub_data[dst_idx] = d_data[src_idx];
+	}
+}
+
+extern "C" __global__ static void extractSubMatrixIndexedKernel(
+	const float* __restrict d_data,			// 源矩阵数据指针
+	float* d_sub_data,						// 子矩阵数据指针
+	const int* __restrict d_row_indices,	// 子矩阵行索引
+	const int* __restrict d_col_indices,	// 子矩阵列索引
+	int src_cols,							// 源矩阵列数
+	int sub_rows,							// 子矩阵行数
+	int sub_cols							// 子矩阵列数
+) {
+	int tid = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (tid < sub_rows * sub_cols) {
+		int sub_row = tid / sub_cols;
+		int sub_col = tid % sub_cols;
+
+		int src_row = d_row_indices[sub_row];
+		int src_col = d_col_indices[sub_col];
+
+		int src_idx = src_row * src_cols + src_col;
+		int dst_idx = sub_row * sub_cols + sub_col;
+
+		d_sub_data[dst_idx] = d_data[src_idx];
+	}
+}
+
+
 extern "C" __global__ static void reshape_kernel(const float* data, float* result, int rows_old, int cols_old, int rows_new, int cols_new) {
 	int idx = threadIdx.x + blockIdx.x * blockDim.x;
 	int idy = threadIdx.y + blockIdx.y * blockDim.y;
@@ -1120,4 +1177,36 @@ cudaMatrix cudaMatrix::setdiff(const cudaMatrix& A, const cudaMatrix& B) {
 	cudaMemcpy(finalResult.data, hostResult.data(), hostResult.size() * sizeof(float), cudaMemcpyHostToDevice);
 
 	return finalResult;
+}
+
+cudaMatrix cudaMatrix::subMatrix(const vector<int>& row_indices, const vector<int>& col_indices) const {
+	int sub_rows = row_indices.size();
+	int sub_cols = col_indices.size();
+
+	// 创建结果矩阵
+	cudaMatrix result(sub_rows, sub_cols);
+
+	// 分配并拷贝行索引到设备端
+	int* d_row_indices = nullptr;
+	cudaMalloc(&d_row_indices, sub_rows * sizeof(int));
+	cudaMemcpy(d_row_indices, row_indices.data(), sub_rows * sizeof(int), cudaMemcpyHostToDevice);
+
+	// 分配并拷贝列索引到设备端
+	int* d_col_indices = nullptr;
+	cudaMalloc(&d_col_indices, sub_cols * sizeof(int));
+	cudaMemcpy(d_col_indices, col_indices.data(), sub_cols * sizeof(int), cudaMemcpyHostToDevice);
+
+	// 设置 CUDA 内核参数
+	int total_elements = sub_rows * sub_cols;
+	int threadsPerBlock = autoSetBlockSize(extractSubMatrixKernel);
+	int blocksPerGrid = (total_elements + threadsPerBlock - 1) / threadsPerBlock;
+	extractSubMatrixIndexedKernel << <blocksPerGrid, threadsPerBlock >> >
+		(this->data, result.data, d_row_indices, d_col_indices, this->cols, sub_rows, sub_cols);
+
+	// 释放设备内存
+	cudaFree(d_row_indices);
+	cudaFree(d_col_indices);
+
+	// 返回结果矩阵
+	return result;
 }
