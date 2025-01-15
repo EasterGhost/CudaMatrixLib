@@ -60,10 +60,10 @@ __global__ static void elementwise_divide_kernel
 }
 
 template <typename Type>
-__global__ static void identity_matrix_kernel(Type* data, int rows)
+__global__ static void identity_matrix_kernel(Type* data, int size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (idx < rows)
+	if (idx < size)
 		data[idx * rows + idx] = 1;
 }
 
