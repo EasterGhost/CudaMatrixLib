@@ -150,14 +150,14 @@ public:
 	* @param[in] j 列索引
 	* @return 矩阵元素
 	*/
-	Type get(const int i, const int j) const;
+	Type get(const int row, const int col) const;
 	/**
 	* @brief 设置矩阵元素
 	* @param[in] i 行索引
 	* @param[in] j 列索引
 	* @param[in] value 元素值
 	*/
-	void set(const int i, const int j, const Type value);
+	void set(const int row, const int col, const Type value);
 
 	Type* data() const;
 
