@@ -122,7 +122,7 @@ public:
 	CudaMatrix(int rows, int cols, vector<Type> data);
 	CudaMatrix(int size, Type* data);
 	CudaMatrix(int size, vector<Type> data);
-	CudaMatrix(const CudaMatrix<Type>& others);
+	CudaMatrix(const CudaMatrix<Type>& other);
 	~CudaMatrix();
 	/**
 	* @brief 获取矩阵行数
@@ -143,7 +143,7 @@ public:
 	* @brief 设置矩阵数据
 	* @param[in] data 矩阵数据
 	*/
-	void setData(const vector<Type>& data);
+	void setData(const vector<Type>& src);
 	/**
 	* @brief 获取矩阵元素
 	* @param[in] i 行索引
@@ -162,5 +162,7 @@ public:
 	Type* data() const;
 
 	void print();
+
+	void add(const CudaMatrix<Type>& other);
 };
 #endif // !TEMPLATE_CUDA_MATRIX_H
