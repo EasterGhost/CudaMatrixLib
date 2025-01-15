@@ -221,7 +221,7 @@ template<typename Type>
 Type* CudaMatrix<Type>::getData() const
 {
 	Type* host_data = new Type[rows * cols];
-	cudaMemcpy(host_data, mat, rows * cols * sizeof(Type), cudaMemcpyDeviceToHost);
+	cudaMemcpy(host_data, mat, static_cast<size_t>(rows) * cols * sizeof(Type), cudaMemcpyDeviceToHost);
 	return host_data;
 }
 
@@ -236,4 +236,16 @@ Type CudaMatrix<Type>::get(const int row, const int col) const
 	Type res = 0;
 	cudaMemcpy(&res, mat + row * cols + col, sizeof(Type), cudaMemcpyDeviceToHost);
 	return res;
+}
+
+template<typename Type>
+template<typename T>
+void CudaMatrix<Type>::add(const CudaMatrix<T>& other)
+{
+	if (rows != other.rows || cols != other.cols)
+		throw runtime_error("æÿ’ÛŒ¨∂»≤ª∆•≈‰°£");
+	int total_elements = rows * cols;
+	int blockSize = autoSetBlockSize(elementwise_add_kernel<Type, T, Type>);
+	int gridSize = (total_elements + blockSize - 1) / blockSize;
+	elementwise_add_kernel<Type, T, Type> << <gridSize, blockSize >> > (mat, other.mat, mat, total_elements, 1, 1);
 }

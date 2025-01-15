@@ -163,6 +163,7 @@ public:
 
 	void print();
 
-	void add(const CudaMatrix<Type>& other);
+	template<typename T>
+	void add(const CudaMatrix<T>& other);
 };
 #endif // !TEMPLATE_CUDA_MATRIX_H
