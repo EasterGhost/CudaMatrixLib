@@ -138,7 +138,7 @@ public:
 	* @brief 获取矩阵数据
 	* @return 矩阵数据
 	*/
-	Type* getData() const;
+	void getData(Type* dst) const;
 	/**
 	* @brief 设置矩阵数据
 	* @param[in] data 矩阵数据

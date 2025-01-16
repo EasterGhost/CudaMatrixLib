@@ -1,7 +1,15 @@
 #include "TemplateCudaMatrix.cuh"
 
 template <typename Type>
-__global__ static void ones_matrix_kernel(Type* data, int total_elements)
+__global__ static void identity_matrix_kernel(Type* data, const int size)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < size)
+		data[idx * size + idx] = 1;
+}
+
+template <typename Type>
+__global__ static void ones_matrix_kernel(Type* data, const int total_elements)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < total_elements)
@@ -9,8 +17,33 @@ __global__ static void ones_matrix_kernel(Type* data, int total_elements)
 }
 
 template <typename Type>
+__global__ static void random_matrix_kernel
+(Type* data, const int total_elements, curandState* states)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < total_elements)
+	{
+		curandState localState = states[idx];
+		if constexpr (std::is_floating_point<Type>::value)
+			data[idx] = curand_uniform(&localState);
+
+		else if constexpr (is_same<Type, double>::value)
+			data[idx] = curand_uniform_double(&localState);
+		else
+			data[idx] = curand(&localState);
+	}
+}
+
+__global__ static void setup_random_kernel(curandState* state, size_t seed, const int size)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < size)
+		curand_init(seed, idx, 0, &state[idx]);
+}
+
+template <typename Type>
 __global__ static void col_vec_broadcast_kernel
-(const Type* src_vec, Type* res, int size, int cols)
+(const Type* src_vec, Type* res, const int size, const int cols)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
@@ -22,7 +55,7 @@ __global__ static void col_vec_broadcast_kernel
 
 template <typename Type>
 __global__ static void row_vec_broadcast_kernel
-(const Type* src_vec, Type* res, int size, int cols)
+(const Type* src_vec, Type* res, const int size, const int cols)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
@@ -33,8 +66,26 @@ __global__ static void row_vec_broadcast_kernel
 }
 
 template <typename T1, typename T2, typename T3>
+__global__ static void elementwise_add_kernel
+(const T1* src1, const T2* src2, T3* res, const int size)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < size)
+		res[idx] = src1[idx] + src2[idx];
+}
+
+template <typename T1, typename T2, typename T3>
+__global__ static void elementwise_subtract_kernel
+(const T1* src1, const T2* src2, T3* res, const int size)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < size)
+		res[idx] = src1[idx] - src2[idx];
+}
+
+template <typename T1, typename T2, typename T3>
 __global__ static void elementwise_multiply_kernel
-(const T1* src1, const T2* src2, T3* res, int size)
+(const T1* src1, const T2* src2, T3* res, const int size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
@@ -42,29 +93,12 @@ __global__ static void elementwise_multiply_kernel
 }
 
 template <typename T1, typename T2, typename T3>
-__global__ static void elementwise_add_kernel
-(const T1* src1, const T2* src2, T3* res, int size, float alpha, float beta)
-{
-	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (idx < size)
-		res[idx] = alpha * src1[idx] + beta * src2[idx];
-}
-
-template <typename T1, typename T2, typename T3>
 __global__ static void elementwise_divide_kernel
-(const T1* src1, const T2* src2, T3* res, int size)
+(const T1* src1, const T2* src2, T3* res, const int size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
 		res[idx] = src1[idx] / src2[idx];
-}
-
-template <typename Type>
-__global__ static void identity_matrix_kernel(Type* data, int size)
-{
-	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (idx < size)
-		data[idx * rows + idx] = 1;
 }
 
 template <class T>
@@ -79,7 +113,7 @@ static int autoSetBlockSize(T func)
 }
 
 template <class T>
-static dim3 autoSetBlockSize2D(T func, int rows, int cols)
+static dim3 autoSetBlockSize2D(T func, const int rows, const int cols)
 {
 	int blockSize = 0;
 	int gridSize = 0;
@@ -112,6 +146,7 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), 
 	cudaMalloc((void**)&mat, total_elements * sizeof(Type));
 	int blockSize = 0;
 	int gridSize = 0;
+	curandState* states = nullptr;
 
 	switch (type)
 	{
@@ -119,7 +154,7 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), 
 		cudaMemset(mat, 0, total_elements * sizeof(Type));
 		break;
 	case Ones:
-		blockSize = autoSetBlockSize(ones);
+		blockSize = autoSetBlockSize(ones_matrix_kernel<Type>);
 		gridSize = (total_elements + blockSize - 1) / blockSize;
 		ones_matrix_kernel<Type> << <gridSize, blockSize >> > (mat, total_elements);
 		break;
@@ -129,20 +164,22 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), 
 			throw runtime_error("Identity matrix must be square matrix.");
 		}
 		cudaMemset(mat, 0, static_cast<size_t>(rows) * cols * sizeof(Type));
-		blockSize = autoSetBlockSize(identity);
+		blockSize = autoSetBlockSize(identity_matrix_kernel<Type>);
 		gridSize = (rows + blockSize - 1) / blockSize;
 		identity_matrix_kernel<Type> << <gridSize, blockSize >> > (mat, rows);
 		break;
 	case Random:
-		curandGenerator_t gen;
-		curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
-		curandSetPseudoRandomGeneratorSeed(gen, time(NULL));
-		curandGenerateUniform(gen, mat, rows * cols);
-		curandDestroyGenerator(gen);
+		blockSize = autoSetBlockSize(random_matrix_kernel<Type>);
+		gridSize = (total_elements + blockSize - 1) / blockSize;
+		cudaMalloc((void**)&states, total_elements * sizeof(curandState));
+		setup_random_kernel << <gridSize, blockSize >> > (states, time(0), total_elements);
+		random_matrix_kernel<Type> << <gridSize, blockSize >> > (mat, total_elements, states);
+
 		break;
 	default:
 		throw runtime_error("Unknown matrix type.");
 	}
+	cudaFree(states);
 }
 
 template <typename Type>
@@ -152,12 +189,7 @@ template <typename Type>
 CudaMatrix<Type>::CudaMatrix(int size, MatrixType type) : CudaMatrix(size, size, type) {}
 
 template <typename Type>
-CudaMatrix<Type>::CudaMatrix(int rows, int cols, Type* src) : rows(rows), cols(cols)
-{
-	int total_elements = rows * cols;
-	cudaMalloc((void**)mat, total_elements * sizeof(Type));
-	cudaMemcpy(mat, src, total_elements * sizeof(Type), cudaMemcpyHostToDevice);
-}
+CudaMatrix<Type>::CudaMatrix(int rows, int cols, Type* src) : CudaMatrix(rows, cols) { cudaMemcpy(mat, src, static_cast<size_t>(rows) * cols * sizeof(Type), cudaMemcpyHostToDevice); }
 
 template <typename Type>
 CudaMatrix<Type>::CudaMatrix(int size, Type* src) : CudaMatrix(size, size, src) {}
@@ -218,12 +250,7 @@ template<typename Type>
 int CudaMatrix<Type>::getCols() const { return cols; }
 
 template<typename Type>
-Type* CudaMatrix<Type>::getData() const
-{
-	Type* host_data = new Type[rows * cols];
-	cudaMemcpy(host_data, mat, static_cast<size_t>(rows) * cols * sizeof(Type), cudaMemcpyDeviceToHost);
-	return host_data;
-}
+void CudaMatrix<Type>::getData(Type* dst) const { cudaMemcpy(dst, mat, static_cast<size_t>(rows) * cols * sizeof(Type), cudaMemcpyDeviceToHost); }
 
 template<typename Type>
 void CudaMatrix<Type>::setData(const vector<Type>& src) { cudaMemcpy(mat, src.data(), src.size(), cudaMemcpyHostToDevice); }
@@ -247,5 +274,5 @@ void CudaMatrix<Type>::add(const CudaMatrix<T>& other)
 	int total_elements = rows * cols;
 	int blockSize = autoSetBlockSize(elementwise_add_kernel<Type, T, Type>);
 	int gridSize = (total_elements + blockSize - 1) / blockSize;
-	elementwise_add_kernel<Type, T, Type> << <gridSize, blockSize >> > (mat, other.mat, mat, total_elements, 1, 1);
+	elementwise_add_kernel<Type, T, Type> << <gridSize, blockSize >> > (mat, other.mat, mat, total_elements);
 }
