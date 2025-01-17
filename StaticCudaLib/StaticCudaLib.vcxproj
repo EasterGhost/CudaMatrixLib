@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="kernel_function.cu" />
     <CudaCompile Include="TemplateCudaMatrix.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="kernel_function.cuh" />
     <ClInclude Include="TemplateCudaMatrix.cuh" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

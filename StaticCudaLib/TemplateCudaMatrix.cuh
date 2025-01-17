@@ -55,6 +55,7 @@
 #include <thread>
 #include <limits>
 #include <mutex>
+#include <stdexcept>
 
 using namespace std;
 
