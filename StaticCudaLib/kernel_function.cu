@@ -12,7 +12,7 @@ __global__ static void ones_matrix_kernel(Type* data, const int total_elements)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < total_elements)
-		data[idx] = 1;
+		data[idx] = (Type)1;
 }
 
 template <typename Type>
