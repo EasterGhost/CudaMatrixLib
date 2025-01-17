@@ -33,7 +33,8 @@ __global__ static void random_matrix_kernel
 	}
 }
 
-__global__ static void setup_random_kernel(curandState* state, size_t seed, const int size)
+__global__ static void setup_random_kernel
+(curandState* state, size_t seed, const int size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
