@@ -17,7 +17,7 @@
 #endif // !NUM_THREADS
 
 #ifndef pi
-#define pi 3.1415926535897932384626433832795
+#define pi 3.1415926535897932
 #endif // !pi
 
 #ifndef O
