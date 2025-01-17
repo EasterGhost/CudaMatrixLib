@@ -21,7 +21,7 @@
 #endif // !pi
 
 #ifndef O
-#define O cudaMatrix(1)
+#define O CudaMatrix(1)
 #endif // !O
 
 #ifndef FORCE_SAFE_SIZE
@@ -55,6 +55,7 @@
 #include <thread>
 #include <limits>
 #include <mutex>
+#include <stdexcept>
 
 using namespace std;
 
