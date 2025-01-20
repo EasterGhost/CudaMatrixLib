@@ -1,5 +1,6 @@
 #include "TemplateCudaMatrix.cuh"
 #include "kernel_function.cuh"
+#include "kernel_function.cu"
 
 template <class T>
 static int autoSetBlockSize(T func)
