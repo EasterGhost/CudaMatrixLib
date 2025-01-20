@@ -3,7 +3,7 @@
 
 int main()
 {
-	CudaMatrix<float> m(3, 3, Random);
+	CudaMatrix<int> m(3, Random);
 	m.print();
 	system("pause");
 	return 0;
