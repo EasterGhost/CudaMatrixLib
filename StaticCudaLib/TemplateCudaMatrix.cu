@@ -38,6 +38,8 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols) : rows(rows), cols(cols)
 	int total_elements = rows * cols;
 	cudaMalloc((void**)&mat, total_elements * sizeof(Type));
 	cudaMemset(mat, 0, total_elements * sizeof(Type));
+	cublasCreate_v2(&handle);
+	cusolverDnCreate(&solver_handle);
 }
 
 template <typename Type>
@@ -80,6 +82,8 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), 
 	default:
 		throw runtime_error("Unknown matrix type.");
 	}
+	cublasCreate_v2(&handle);
+	cusolverDnCreate(&solver_handle);
 	cudaFree(states);
 }
 
@@ -107,6 +111,8 @@ CudaMatrix<Type>::CudaMatrix(const CudaMatrix<Type>& other) : rows(other.rows), 
 	int total_elements = rows * cols;
 	cudaMalloc((void**)&mat, total_elements * sizeof(Type));
 	cudaMemcpy(mat, other.mat, total_elements * sizeof(Type), cudaMemcpyDeviceToDevice);
+	cublasCreate_v2(&handle);
+	cusolverDnCreate(&solver_handle);
 }
 
 template <typename Type>
@@ -117,14 +123,16 @@ CudaMatrix<Type>::~CudaMatrix()
 	cols = 0;
 	cudaFree(mat);
 	mat = nullptr;
+	cublasDestroy_v2(handle);
+	cusolverDnDestroy(solver_handle);
 }
 
 template<typename Type>
 void CudaMatrix<Type>::set(const int row, const int col, const Type value)
 {
 	if (row < 0 || row >= rows || col < 0 || col >= cols)
-		throw out_of_range("Ë÷Òý³¬³ö·¶Î§¡£");
-	cudaMemcpy(mat + row * cols + col, &value, sizeof(Type), cudaMemcpyHostToDevice);
+		throw out_of_range("Index out of range.");
+	CUDA_CHECK(cudaMemcpy(mat + row * cols + col, &value, sizeof(Type), cudaMemcpyHostToDevice));
 }
 
 template<typename Type>
@@ -160,7 +168,7 @@ template<typename Type>
 Type CudaMatrix<Type>::get(const int row, const int col) const
 {
 	if (row < 0 || row >= rows || col < 0 || col >= cols)
-		throw out_of_range("Ë÷Òý³¬³ö·¶Î§¡£");
+		throw out_of_range("Index out of range.");
 	Type res = 0;
 	cudaMemcpy(&res, mat + row * cols + col, sizeof(Type), cudaMemcpyDeviceToHost);
 	return res;
@@ -171,7 +179,7 @@ template<typename T>
 void CudaMatrix<Type>::add(const CudaMatrix<T>& other)
 {
 	if (rows != other.rows || cols != other.cols)
-		throw runtime_error("¾ØÕóÎ¬¶È²»Æ¥Åä¡£");
+		throw runtime_error("Matrix size does not match.");
 	int total_elements = rows * cols;
 	int blockSize = autoSetBlockSize(elementwise_add_kernel<Type, T, Type>);
 	int gridSize = (total_elements + blockSize - 1) / blockSize;

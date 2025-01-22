@@ -42,8 +42,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Andrew Elizabeth\source\repos\EasterGhost\CudaMatrixLib\StaticCudaLib;$(CUDA_INCLUDE_V12_6);$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Andrew Elizabeth\source\repos\EasterGhost\CudaMatrixLib\x64\Debug;$(CUDA_LIB_V12_6);$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\MinGW\include;A:\Andrew Elizabeth\source\repos\EasterGhost\CudaMatrixLib\StaticCudaLib;$(CUDA_INCLUDE_V12_6);$(IncludePath)</IncludePath>
+    <LibraryPath>D:\MinGW\lib;A:\Andrew Elizabeth\source\repos\EasterGhost\CudaMatrixLib\x64\Debug;$(CUDA_LIB_V12_6);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -85,7 +85,7 @@
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CudaCompile Include="kernel.cu" />
+    <CudaCompile Include="test.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
