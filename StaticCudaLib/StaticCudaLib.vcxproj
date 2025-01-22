@@ -81,10 +81,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(CUDA_INCLUDE_V12_6);$(IncludePath)</IncludePath>
+    <IncludePath>D:\MinGW\include;$(CUDA_INCLUDE_V12_6);$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(CUDA_INCLUDE_V12_6);$(ExternalIncludePath)</ExternalIncludePath>
     <ReferencePath>$(CUDA_LIB_V12_6);$(ReferencePath)</ReferencePath>
-    <LibraryPath>$(CUDA_LIB_V12_6);$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\MinGW\lib;$(CUDA_LIB_V12_6);$(LibraryPath)</LibraryPath>
     <ManagedAssembly>true</ManagedAssembly>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -140,6 +140,7 @@
     <CudaLink>
       <PerformDeviceLinkTimeOptimization>true</PerformDeviceLinkTimeOptimization>
     </CudaLink>
+    <CudaCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
