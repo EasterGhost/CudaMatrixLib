@@ -33,7 +33,7 @@ CudaMatrix<Type>::CudaMatrix()
 }
 
 template <typename Type>
-CudaMatrix<Type>::CudaMatrix(int rows, int cols) : rows(rows), cols(cols)
+CudaMatrix<Type>::CudaMatrix(const unsigned int rows, const unsigned int cols) : rows(rows), cols(cols)
 {
 	int total_elements = rows * cols;
 	cudaMalloc((void**)&mat, total_elements * sizeof(Type));
@@ -43,7 +43,7 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols) : rows(rows), cols(cols)
 }
 
 template <typename Type>
-CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), cols(cols)
+CudaMatrix<Type>::CudaMatrix(const unsigned int rows, const unsigned int cols, const MatrixType type) : rows(rows), cols(cols)
 {
 	int total_elements = rows * cols;
 	cudaMalloc((void**)&mat, total_elements * sizeof(Type));
@@ -77,7 +77,7 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), 
 		{
 			blockSize = autoSetBlockSize(random_matrix_kernel<Type>);
 			gridSize = (total_elements + blockSize - 1) / blockSize;
-			random_matrix_kernel<Type> << <gridSize, blockSize >> >
+			float_random_matrix_kernel << <gridSize, blockSize >> >
 				((float*)mat, total_elements, states);
 		}
 		else if constexpr (is_same<Type, double>::value)
@@ -97,7 +97,6 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), 
 		cudaFree(states);
 		break;
 	default:
-		//cudaFree(states);
 		throw runtime_error("Unknown matrix type.");
 	}
 	cublasCreate_v2(&handle);
@@ -105,22 +104,22 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), 
 }
 
 template <typename Type>
-CudaMatrix<Type>::CudaMatrix(int size) : CudaMatrix(size, size) {}
+CudaMatrix<Type>::CudaMatrix(const unsigned int size) : CudaMatrix(size, size) {}
 
 template <typename Type>
-CudaMatrix<Type>::CudaMatrix(int size, MatrixType type) : CudaMatrix(size, size, type) {}
+CudaMatrix<Type>::CudaMatrix(const unsigned int size, const MatrixType type) : CudaMatrix(size, size, type) {}
 
 template <typename Type>
-CudaMatrix<Type>::CudaMatrix(int rows, int cols, Type* src) : CudaMatrix(rows, cols) { cudaMemcpy(mat, src, static_cast<size_t>(rows) * cols * sizeof(Type), cudaMemcpyHostToDevice); }
+CudaMatrix<Type>::CudaMatrix(const unsigned int rows, const unsigned int cols, const Type* src) : CudaMatrix(rows, cols) { cudaMemcpy(mat, src, static_cast<size_t>(rows) * cols * sizeof(Type), cudaMemcpyHostToDevice); }
 
 template <typename Type>
-CudaMatrix<Type>::CudaMatrix(int size, Type* src) : CudaMatrix(size, size, src) {}
+CudaMatrix<Type>::CudaMatrix(const unsigned int size, const Type* src) : CudaMatrix(size, size, src) {}
 
 template<typename Type>
-CudaMatrix<Type>::CudaMatrix(int size, vector<Type> src) : CudaMatrix(size, size, src.data()) {}
+CudaMatrix<Type>::CudaMatrix(const unsigned int size, const vector<Type>& src) : CudaMatrix(size, size, src.data()) {}
 
 template <typename Type>
-CudaMatrix<Type>::CudaMatrix(int rows, int cols, vector<Type> src) : CudaMatrix(rows, cols, src.data()) {}
+CudaMatrix<Type>::CudaMatrix(const unsigned int rows, unsigned int cols, const vector<Type>& src) : CudaMatrix(rows, cols, src.data()) {}
 
 template <typename Type>
 CudaMatrix<Type>::CudaMatrix(const CudaMatrix<Type>& other) : rows(other.rows), cols(other.cols)
@@ -145,9 +144,9 @@ CudaMatrix<Type>::~CudaMatrix()
 }
 
 template<typename Type>
-void CudaMatrix<Type>::set(const int row, const int col, const Type value)
+void CudaMatrix<Type>::set(const unsigned int row, const unsigned int col, const Type value)
 {
-	if (row < 0 || row >= rows || col < 0 || col >= cols)
+	if (row >= rows || col >= cols)
 		throw out_of_range("Index out of range.");
 	CUDA_CHECK(cudaMemcpy(mat + row * cols + col, &value, sizeof(Type), cudaMemcpyHostToDevice));
 }
@@ -170,10 +169,10 @@ void CudaMatrix<Type>::print()
 }
 
 template<typename Type>
-int CudaMatrix<Type>::getRows() const { return rows; }
+unsigned int CudaMatrix<Type>::getRows() const { return rows; }
 
 template<typename Type>
-int CudaMatrix<Type>::getCols() const { return cols; }
+unsigned int CudaMatrix<Type>::getCols() const { return cols; }
 
 template<typename Type>
 void CudaMatrix<Type>::getData(Type* dst) const { cudaMemcpy(dst, mat, static_cast<size_t>(rows) * cols * sizeof(Type), cudaMemcpyDeviceToHost); }
@@ -182,9 +181,9 @@ template<typename Type>
 void CudaMatrix<Type>::setData(const vector<Type>& src) { cudaMemcpy(mat, src.data(), src.size(), cudaMemcpyHostToDevice); }
 
 template<typename Type>
-Type CudaMatrix<Type>::get(const int row, const int col) const
+Type CudaMatrix<Type>::get(const unsigned int row, const unsigned int col) const
 {
-	if (row < 0 || row >= rows || col < 0 || col >= cols)
+	if (row >= rows || col >= cols)
 		throw out_of_range("Index out of range.");
 	Type res = 0;
 	cudaMemcpy(&res, mat + row * cols + col, sizeof(Type), cudaMemcpyDeviceToHost);
@@ -200,5 +199,6 @@ void CudaMatrix<Type>::add(const CudaMatrix<T>& other)
 	int total_elements = rows * cols;
 	int blockSize = autoSetBlockSize(elementwise_add_kernel<Type, T, Type>);
 	int gridSize = (total_elements + blockSize - 1) / blockSize;
-	elementwise_add_kernel<Type, T, Type> << <gridSize, blockSize >> > (mat, other.mat, mat, total_elements);
+	elementwise_add_kernel<Type, T, Type> << <gridSize, blockSize >> >
+		(mat, other.mat, mat, total_elements);
 }
