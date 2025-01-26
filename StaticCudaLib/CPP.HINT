@@ -1,3 +1,5 @@
 #define __global__ __location__(global)
 #define __device_builtin__
 #define __device_builtin__ __location__(device_builtin)
+#define __location__(a) __annotate__(a)
+#define __location__(a) __annotate__(__##a##__)

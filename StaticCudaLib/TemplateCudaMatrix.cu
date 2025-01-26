@@ -50,7 +50,6 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), 
 	int blockSize = 0;
 	int gridSize = 0;
 	curandState* states = nullptr;
-
 	switch (type)
 	{
 	case Zero:
@@ -63,28 +62,46 @@ CudaMatrix<Type>::CudaMatrix(int rows, int cols, MatrixType type) : rows(rows), 
 		break;
 	case Identity:
 		if (rows != cols)
-		{
 			throw runtime_error("Identity matrix must be square matrix.");
-		}
 		cudaMemset(mat, 0, static_cast<size_t>(rows) * cols * sizeof(Type));
 		blockSize = autoSetBlockSize(identity_matrix_kernel<Type>);
 		gridSize = (rows + blockSize - 1) / blockSize;
 		identity_matrix_kernel<Type> << <gridSize, blockSize >> > (mat, rows);
 		break;
 	case Random:
-		blockSize = autoSetBlockSize(random_matrix_kernel<Type>);
+		blockSize = autoSetBlockSize(setup_random_kernel);
 		gridSize = (total_elements + blockSize - 1) / blockSize;
 		cudaMalloc((void**)&states, total_elements * sizeof(curandState));
 		setup_random_kernel << <gridSize, blockSize >> > (states, time(0), total_elements);
-		random_matrix_kernel<Type> << <gridSize, blockSize >> > (mat, total_elements, states);
-
+		if constexpr (is_floating_point<Type>::value)
+		{
+			blockSize = autoSetBlockSize(random_matrix_kernel<Type>);
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			random_matrix_kernel<Type> << <gridSize, blockSize >> >
+				((float*)mat, total_elements, states);
+		}
+		else if constexpr (is_same<Type, double>::value)
+		{
+			blockSize = autoSetBlockSize(double_random_matrix_kernel);
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			double_random_matrix_kernel << <gridSize, blockSize >> >
+				((double*)mat, total_elements, states);
+		}
+		else
+		{
+			blockSize = autoSetBlockSize(int_random_matrix_kernel);
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			int_random_matrix_kernel << <gridSize, blockSize >> >
+				((int*)mat, total_elements, states);
+		}
+		cudaFree(states);
 		break;
 	default:
+		//cudaFree(states);
 		throw runtime_error("Unknown matrix type.");
 	}
 	cublasCreate_v2(&handle);
 	cusolverDnCreate(&solver_handle);
-	cudaFree(states);
 }
 
 template <typename Type>

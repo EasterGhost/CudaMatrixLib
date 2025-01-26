@@ -23,6 +23,15 @@ template <typename Type>
 __global__ static void random_matrix_kernel
 (Type* data, const int total_elements, curandState* states);
 
+__global__ static void float_random_matrix_kernel
+(float* data, const int total_elements, curandState* states);
+
+__global__ static void double_random_matrix_kernel
+(double* data, const int total_elements, curandState* states);
+
+__global__ static void int_random_matrix_kernel
+(int* data, const int total_elements, curandState* states);
+
 __global__ static void setup_random_kernel
 (curandState* state, size_t seed, const int size);
 

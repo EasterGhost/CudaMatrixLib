@@ -30,6 +30,34 @@ __global__ static void random_matrix_kernel
 			data[idx] = (Type)curand(states + idx);
 }
 
+__global__ static void float_random_matrix_kernel
+(float* data, const int total_elements, curandState* states)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	curandState localState = states[idx];
+	if (idx < total_elements)
+		data[idx] = curand_uniform(&localState);
+}
+
+__global__ static void double_random_matrix_kernel
+(double* data, const int total_elements, curandState* states)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	curandState localState = states[idx];
+	if (idx < total_elements)
+		data[idx] = curand_uniform_double(&localState);
+}
+
+__global__ static void int_random_matrix_kernel
+(int* data, const int total_elements, curandState* states)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	curandState localState = states[idx];
+	if (idx < total_elements)
+		data[idx] = curand(&localState);
+	states[idx] = localState;
+}
+
 __global__ static void setup_random_kernel
 (curandState* state, size_t seed, const int size)
 {
