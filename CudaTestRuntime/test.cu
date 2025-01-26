@@ -10,9 +10,8 @@ int main()
 	int n = 5000;
 	int loop = 1000;
 	clock_t start, end;
-	cout << "Int Matrix Test Start." << endl;
+	cout << "Int Matrix Test Start." << endl << "0% Done";
 	start = clock();
-	cout << "0% Done";
 	for (int i = 1; i <= loop; i++)
 	{
 		CudaMatrix<int> m(n, Random);
@@ -25,9 +24,8 @@ int main()
 	cout << endl << "Time used in int matrix generation: "
 		<< (double)(end - start) / 1000000 << "s" << endl
 		<< "----------------------------------------" << endl
-		<< "Float Matrix Test Start." << endl;
+		<< "Float Matrix Test Start." << endl << "0% Done";
 	start = clock();
-	cout << "0% Done";
 	for (int i = 1; i <= loop; i++)
 	{
 		CudaMatrix<float> m(n, Random);
@@ -41,9 +39,8 @@ int main()
 		<< endl << "Time used in float matrix generation: "
 		<< (double)(end - start) / 1000000 << "s" << endl
 		<< "----------------------------------------" << endl
-		<< "Double Matrix Test Start." << endl;
+		<< "Double Matrix Test Start." << endl << "0% Done";
 	start = clock();
-	cout << "0% Done";
 	for (int i = 1; i <= loop; i++)
 	{
 		CudaMatrix<double> m(n, Random);
@@ -54,8 +51,8 @@ int main()
 	}
 	end = clock();
 	cout << endl << "Time used in double matrix generation: "
-		<< (double)(end - start) / 1000000 << "s" << endl;
-	cout << "--------Random matrix generation test end.--------" << endl;
+		<< (double)(end - start) / 1000000 << "s" << endl
+		<< "--------Random matrix generation test end.--------" << endl;
 	system("pause");
 	return 0;
 }
