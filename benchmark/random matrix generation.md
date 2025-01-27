@@ -21,7 +21,7 @@
 
 - **硬件**:
   - CPU: AMD EPYC 9654 @3.7GHz (96 cores)
-  - GPU: NVIDIA GeForce RTX 4090D @2520MHz with 24GB GDDR6X @22Gbps
+  - GPU: NVIDIA GeForce RTX 4090D @2520MHz with 24GB GDDR6X @21Gbps
   - 内存: 32GB $\times$ 6 DDR5 @4800MHz
   - 存储: 3.84TB NVMe SSD
 
