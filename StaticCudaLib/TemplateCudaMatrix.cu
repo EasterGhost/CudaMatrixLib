@@ -68,7 +68,7 @@ CudaMatrix<Type>::CudaMatrix(const unsigned int rows, const unsigned int cols, c
 		gridSize = (rows + blockSize - 1) / blockSize;
 		identity_matrix_kernel<Type> << <gridSize, blockSize >> > (mat, rows);
 		break;
-	case Random:
+	case Random: //
 		blockSize = autoSetBlockSize(setup_random_kernel);
 		gridSize = (total_elements + blockSize - 1) / blockSize;
 		cudaMalloc((void**)&states, total_elements * sizeof(curandState));
