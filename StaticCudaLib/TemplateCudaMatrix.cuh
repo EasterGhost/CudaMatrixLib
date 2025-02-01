@@ -1,12 +1,12 @@
-/**
+ï»¿/**
 * @file TemplateCudaMatrix.cuh
-* @brief CUDA ¾ØÕóÀàÍ·ÎÄ¼ş
-* @note Ê¹ÓÃ cuBLAS ÊµÏÖ¾ØÕóÔËËã
+* @brief CUDA çŸ©é˜µç±»å¤´æ–‡ä»¶
+* @note ä½¿ç”¨ cuBLAS å®ç°çŸ©é˜µè¿ç®—
 * @date 2024-12-16
 * @version 1.0
 * @author Andrew Elizabeth
 * @copyright MIT License
-* @note ±¾ÎÄ¼şÖĞµÄ´úÂë½öÖ§³ÖÔÚ CUDA »·¾³ÏÂ±àÒëºÍÔËĞĞ
+* @note æœ¬æ–‡ä»¶ä¸­çš„ä»£ç ä»…æ”¯æŒåœ¨ CUDA ç¯å¢ƒä¸‹ç¼–è¯‘å’Œè¿è¡Œ
 * @example examples/cuda_matrix_example.cpp
 */
 
@@ -42,148 +42,145 @@
 #define TEMPLATE_CUDA_MATRIX_H
 
 #include <cuda_runtime.h>
-#include <cuda_runtime_api.h>
-#include <curand_kernel.h>
-#include <device_launch_parameters.h>
-#include <sm_60_atomic_functions.h>
-#include <sm_61_intrinsics.h>
 #include <cublas_v2.h>
 #include <cusolverDn.h>
-#include <iostream>
 #include <vector>
-#include <cstdarg>
-#include <ctime>
-#include <cmath>
-#include <thread>
-#include <limits>
-#include <mutex>
 #include <stdexcept>
-
+#include <iostream>
+#include <string>
+#include <device_launch_parameters.h>
+#include <cuda_runtime_api.h>
+#include <ctime>
+#include <cstdarg>
+#include <curand.h>
+#include <curand_philox4x32_x.h>
+#include <driver_types.h>
+#include <curand_kernel.h>
+#include <curand_uniform.h>
 using namespace std;
-
 /**
-* @brief ¾ØÕóÀàĞÍ
+* @brief çŸ©é˜µç±»å‹
 * @enum MatrixType
-* @note ÓÃÓÚ±êÊ¶Éú³ÉÌØ¶¨ÀàĞÍµÄ¾ØÕó
-* @note Zero: È«Áã¾ØÕó
-* @note Ones: È«Ò»¾ØÕó
-* @note Identity: µ¥Î»¾ØÕó
-* @note Random: Ëæ»ú¾ØÕó
+* @note ç”¨äºæ ‡è¯†ç”Ÿæˆç‰¹å®šç±»å‹çš„çŸ©é˜µ
+* @note Zero: å…¨é›¶çŸ©é˜µ
+* @note Ones: å…¨ä¸€çŸ©é˜µ
+* @note Identity: å•ä½çŸ©é˜µ
+* @note Random: éšæœºçŸ©é˜µ
 */
 typedef enum __device_builtin__ MatrixType : uint8_t
 {
 	Identity = 255,
 	Zero = 0,
 	Ones,
-	Random
+	Random,
+	QuasiRandom
 }MatrixType;
 
 /**
-* @brief ÉèÖÃ CUDA ºËº¯ÊıµÄÏß³Ì¿é´óĞ¡
-* @tparam T CUDA ºËº¯Êı
-* @param[in] func CUDA ºËº¯Êı
-* @return Ïß³Ì¿é´óĞ¡
-* @throw runtime_error Èç¹ûÉèÖÃÊ§°Ü
-* @note Ê¹ÓÃ cudaOccupancyMaxPotentialBlockSize º¯ÊıÉèÖÃÏß³Ì¿é´óĞ¡
+* @brief è®¾ç½® CUDA æ ¸å‡½æ•°çš„çº¿ç¨‹å—å¤§å°
+* @tparam T CUDA æ ¸å‡½æ•°
+* @param[in] func CUDA æ ¸å‡½æ•°
+* @return çº¿ç¨‹å—å¤§å°
+* @throw runtime_error å¦‚æœè®¾ç½®å¤±è´¥
+* @note ä½¿ç”¨ cudaOccupancyMaxPotentialBlockSize å‡½æ•°è®¾ç½®çº¿ç¨‹å—å¤§å°
 */
 template<class T>
 static int autoSetBlockSize(T func);
 
 /**
-* @brief ÉèÖÃ CUDA ºËº¯ÊıµÄÏß³Ì¿é´óĞ¡
-* @tparam T CUDA ºËº¯Êı
-* @param[in] func CUDA ºËº¯Êı
-* @param[in] rows ¾ØÕóĞĞÊı
-* @param[in] cols ¾ØÕóÁĞÊı
-* @return Ïß³Ì¿é´óĞ¡
-* @throw runtime_error Èç¹ûÉèÖÃÊ§°Ü
-* @note Ê¹ÓÃ cudaOccupancyMaxPotentialBlockSize º¯ÊıÉèÖÃÏß³Ì¿é´óĞ¡
+* @brief è®¾ç½® CUDA æ ¸å‡½æ•°çš„çº¿ç¨‹å—å¤§å°
+* @tparam T CUDA æ ¸å‡½æ•°
+* @param[in] func CUDA æ ¸å‡½æ•°
+* @param[in] rows çŸ©é˜µè¡Œæ•°
+* @param[in] cols çŸ©é˜µåˆ—æ•°
+* @return çº¿ç¨‹å—å¤§å°
+* @throw runtime_error å¦‚æœè®¾ç½®å¤±è´¥
+* @note ä½¿ç”¨ cudaOccupancyMaxPotentialBlockSize å‡½æ•°è®¾ç½®çº¿ç¨‹å—å¤§å°
 */
 template<class T>
 static dim3 autoSetBlockSize2D(T func, int rows, int cols);
 
 /**
-* @brief CUDA ĞĞÓÅÏÈ¾ØÕóÀà
+* @brief CUDA è¡Œä¼˜å…ˆçŸ©é˜µç±»
 * @class cudaMatrix
 */
 template <typename Type>
 class CudaMatrix
 {
 private:
-	unsigned int rows; /// ¾ØÕóĞĞÊı
-	unsigned int cols; /// ¾ØÕóÁĞÊı
-	Type* mat; /// ¾ØÕóÊı¾İ
-	cublasHandle_t handle; /// cuBLAS ¾ä±ú
-	cusolverDnHandle_t solver_handle; /// cuSOLVER ¾ä±ú
-	//cudaStream_t stream; /// CUDA Á÷
+	unsigned int rows, cols;
+	Type* mat; /// çŸ©é˜µæ•°æ®
+	cublasHandle_t handle; /// cuBLAS å¥æŸ„
+	cusolverDnHandle_t solver_handle; /// cuSOLVER å¥æŸ„
+	//cudaStream_t stream; /// CUDA æµ
 public:
 	/**
-	 * @brief Ä¬ÈÏ¹¹Ôìº¯Êı
+	 * @brief é»˜è®¤æ„é€ å‡½æ•°
 	 */
 	CudaMatrix();
 	/**
-	 * @brief ²ÎÊı»¯¹¹Ôìº¯Êı£¨0³õÊ¼»¯£©
-	 * @param rows ¾ØÕóĞĞÊı
-	 * @param cols ¾ØÕóÁĞÊı
+	 * @brief å‚æ•°åŒ–æ„é€ å‡½æ•°ï¼ˆ0åˆå§‹åŒ–ï¼‰
+	 * @param rows çŸ©é˜µè¡Œæ•°
+	 * @param cols çŸ©é˜µåˆ—æ•°
 	 */
 	CudaMatrix(const unsigned int rows, const unsigned int cols);
 	CudaMatrix(const unsigned int size);
 	/**
-	 * @brief ²ÎÊı»¯¹¹Ôìº¯Êı£¨Ö¸¶¨ÀàĞÍ£©
-	 * @param rows ¾ØÕóĞĞÊı
-	 * @param cols ¾ØÕóÁĞÊı
-	 * @param type ¾ØÕóÀàĞÍ
+	 * @brief å‚æ•°åŒ–æ„é€ å‡½æ•°ï¼ˆæŒ‡å®šç±»å‹ï¼‰
+	 * @param rows çŸ©é˜µè¡Œæ•°
+	 * @param cols çŸ©é˜µåˆ—æ•°
+	 * @param type çŸ©é˜µç±»å‹
 	 */
 	CudaMatrix(const unsigned int rows, const unsigned int cols, const MatrixType type);
 	CudaMatrix(const unsigned int size, const MatrixType type);
 	/**
-	 * @brief Êı¾İ¹¹Ôìº¯Êı
-	 * @param rows ¾ØÕóĞĞÊı
-	 * @param cols ¾ØÕóÁĞÊı
-	 * @param data ¾ØÕóÊı¾İ
+	 * @brief æ•°æ®æ„é€ å‡½æ•°
+	 * @param rows çŸ©é˜µè¡Œæ•°
+	 * @param cols çŸ©é˜µåˆ—æ•°
+	 * @param data çŸ©é˜µæ•°æ®
 	 */
 	CudaMatrix(const unsigned int rows, const unsigned int cols, const Type* src);
 	CudaMatrix(const unsigned int rows, const unsigned int cols, const vector<Type>& src);
 	CudaMatrix(const unsigned int size, const Type* src);
 	CudaMatrix(const unsigned int size, const vector<Type>& src);
 	/**
-	 * @brief ¿½±´¹¹Ôìº¯Êı
-	 * @param other ÁíÒ»¸öcuda¾ØÕó
+	 * @brief æ‹·è´æ„é€ å‡½æ•°
+	 * @param other å¦ä¸€ä¸ªcudaçŸ©é˜µ
 	 */
 	CudaMatrix(const CudaMatrix<Type>& other);
 	~CudaMatrix();
 	/**
-	* @brief »ñÈ¡¾ØÕóĞĞÊı
-	* @return ¾ØÕóĞĞÊı
+	* @brief è·å–çŸ©é˜µè¡Œæ•°
+	* @return çŸ©é˜µè¡Œæ•°
 	*/
 	unsigned int getRows() const;
 	/**
-	* @brief »ñÈ¡¾ØÕóÁĞÊı
-	* @return ¾ØÕóÁĞÊı
+	* @brief è·å–çŸ©é˜µåˆ—æ•°
+	* @return çŸ©é˜µåˆ—æ•°
 	*/
 	unsigned int getCols() const;
 	/**
-	* @brief »ñÈ¡¾ØÕóÊı¾İ
-	* @return ¾ØÕóÊı¾İ
+	* @brief è·å–çŸ©é˜µæ•°æ®
+	* @return çŸ©é˜µæ•°æ®
 	*/
 	void getData(Type* dst) const;
 	/**
-	* @brief ÉèÖÃ¾ØÕóÊı¾İ
-	* @param[in] data ¾ØÕóÊı¾İ
+	* @brief è®¾ç½®çŸ©é˜µæ•°æ®
+	* @param[in] data çŸ©é˜µæ•°æ®
 	*/
 	void setData(const vector<Type>& src);
 	/**
-	* @brief »ñÈ¡¾ØÕóÔªËØ
-	* @param[in] i ĞĞË÷Òı
-	* @param[in] j ÁĞË÷Òı
-	* @return ¾ØÕóÔªËØ
+	* @brief è·å–çŸ©é˜µå…ƒç´ 
+	* @param[in] i è¡Œç´¢å¼•
+	* @param[in] j åˆ—ç´¢å¼•
+	* @return çŸ©é˜µå…ƒç´ 
 	*/
 	Type get(const unsigned int row, const unsigned int col) const;
 	/**
-	* @brief ÉèÖÃ¾ØÕóÔªËØ
-	* @param[in] i ĞĞË÷Òı
-	* @param[in] j ÁĞË÷Òı
-	* @param[in] value ÔªËØÖµ
+	* @brief è®¾ç½®çŸ©é˜µå…ƒç´ 
+	* @param[in] i è¡Œç´¢å¼•
+	* @param[in] j åˆ—ç´¢å¼•
+	* @param[in] value å…ƒç´ å€¼
 	*/
 	void set(const unsigned int row, const unsigned int col, const Type value);
 

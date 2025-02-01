@@ -1,7 +1,8 @@
+﻿#pragma once
 #include "kernel_function.cuh"
 
 template <typename Type>
-__global__ static void identity_matrix_kernel(Type* data, const int size)
+__global__ static void identity_matrix_kernel(Type* data, const unsigned int size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
@@ -9,61 +10,88 @@ __global__ static void identity_matrix_kernel(Type* data, const int size)
 }
 
 template <typename Type>
-__global__ static void ones_matrix_kernel(Type* data, const int total_elements)
+__global__ static void ones_matrix_kernel(Type* data, const unsigned int total_elements)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < total_elements)
 		data[idx] = (Type)1;
 }
 
-template <typename Type>
-__global__ static void random_matrix_kernel
-(Type* data, const int total_elements, curandState* states)
+__global__ static void float_random_matrix_kernel
+(float* data, const unsigned int total_elements, curandStatePhilox4_32_10_t* states)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < total_elements)
-		if constexpr (is_floating_point<Type>::value)
-			data[idx] = curand_uniform(states + idx);
-		else if constexpr (is_same<Type, double>::value)
-			data[idx] = curand_uniform_double(states + idx);
-		else
-			data[idx] = (Type)curand(states + idx);
+		data[idx] = curand_uniform(&states[idx]);
 }
 
-__global__ static void float_random_matrix_kernel
-(float* data, const int total_elements, curandState* states)
+__global__ static void float_qrandom_matrix_kernel
+(float* data, curandStateScrambledSobol32_t* states, const unsigned int n, const unsigned int dimensions)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	curandState localState = states[idx];
-	if (idx < total_elements)
-		data[idx] = curand_uniform(&localState);
+	if (idx < n)
+		for (int d = 0; d < dimensions; d++)
+			data[idx * dimensions + d] = curand_uniform(&states[idx * dimensions + d]);
 }
 
 __global__ static void double_random_matrix_kernel
-(double* data, const int total_elements, curandState* states)
+(double* data, const unsigned int total_elements, curandStatePhilox4_32_10_t* states)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	curandState localState = states[idx];
 	if (idx < total_elements)
-		data[idx] = curand_uniform_double(&localState);
+		data[idx] = curand_uniform_double(&states[idx]);
+}
+
+__global__ static void double_qrandom_matrix_kernel
+(double* data, curandStateScrambledSobol64_t* states, const unsigned int n, const unsigned int dimensions)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < n)
+		for (int d = 0; d < dimensions; d++)
+			data[idx * dimensions + d] = curand_uniform_double(&states[idx * dimensions + d]);
 }
 
 __global__ static void int_random_matrix_kernel
-(int* data, const int total_elements, curandState* states)
+(int* data, const unsigned int total_elements, curandStatePhilox4_32_10_t* states)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	curandState localState = states[idx];
 	if (idx < total_elements)
-		data[idx] = curand(&localState);
-	states[idx] = localState;
+		data[idx] = curand(&states[idx]);
+}
+
+__global__ static void int_qrandom_matrix_kernel
+(int* data, curandStateScrambledSobol32_t* states, const unsigned int n, const unsigned int dimensions)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < n)
+		for (int d = 0; d < dimensions; d++)
+			data[idx * dimensions + d] = curand(&states[idx * dimensions + d]);
 }
 
 __global__ static void setup_random_kernel
-(curandState* state, size_t seed, const int size)
+(curandStatePhilox4_32_10_t* states, size_t seed, const unsigned int size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
-		curand_init(seed, idx, 0, &state[idx]);
+		curand_init(seed, idx, 0, states + idx);
+}
+
+__global__ static void setup_q32random_kernel
+(curandStateScrambledSobol32_t* states, curandDirectionVectors32_t* dr_vec, const unsigned int n, const unsigned int dimensions)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < n)
+		for (int d = 0; d < dimensions; d++)
+			curand_init(dr_vec[d], idx, 0, states + (idx * dimensions + d));
+}
+
+__global__ static void setup_q64random_kernel
+(curandStateScrambledSobol64_t* states, curandDirectionVectors64_t* dr_vec, const unsigned int n, const unsigned int dimensions)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < n)
+		for (int d = 0; d < dimensions; d++)
+			curand_init(dr_vec[d], idx, 0, states + (idx * dimensions + d));
 }
 
 template <typename Type>

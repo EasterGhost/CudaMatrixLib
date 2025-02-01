@@ -1,6 +1,13 @@
-#include "TemplateCudaMatrix.cuh"
+﻿#include "kernel_function.cu"
 #include "kernel_function.cuh"
-#include "kernel_function.cu"
+#include "TemplateCudaMatrix.cuh"
+
+extern clock_t time_used_init = 0;
+extern clock_t time_used_gen_init = 0;
+extern clock_t time_used_gen = 0;
+extern clock_t time_used_switch_type = 0;
+extern clock_t time_used_setblock = 0;
+extern clock_t time_used_end = 0;
 
 template <class T>
 static int autoSetBlockSize(T func)
@@ -8,6 +15,8 @@ static int autoSetBlockSize(T func)
 	int blockSize = 0;
 	int gridSize = 0;
 	cudaOccupancyMaxPotentialBlockSize(&gridSize, &blockSize, func, 0, 0);
+	if (blockSize < 32)
+		blockSize = 32;
 	if (blockSize == 0)
 		throw runtime_error("Failed to set block size.");
 	return blockSize;
@@ -45,11 +54,18 @@ CudaMatrix<Type>::CudaMatrix(const unsigned int rows, const unsigned int cols) :
 template <typename Type>
 CudaMatrix<Type>::CudaMatrix(const unsigned int rows, const unsigned int cols, const MatrixType type) : rows(rows), cols(cols)
 {
-	int total_elements = rows * cols;
+	clock_t start = clock();
+	size_t total_elements = static_cast<size_t>(rows) * cols;
 	cudaMalloc((void**)&mat, total_elements * sizeof(Type));
 	int blockSize = 0;
 	int gridSize = 0;
-	curandState* states = nullptr;
+	curandStatePhilox4_32_10_t* states = nullptr;
+	curandStateScrambledSobol32_t* qstates32 = nullptr;
+	curandStateScrambledSobol64_t* qstates64 = nullptr;
+	curandDirectionVectors32_t* dr_vec32 = nullptr;
+	curandDirectionVectors64_t* dr_vec64 = nullptr;
+	cudaDeviceSynchronize();
+	time_used_init += clock() - start;
 	switch (type)
 	{
 	case Zero:
@@ -59,6 +75,7 @@ CudaMatrix<Type>::CudaMatrix(const unsigned int rows, const unsigned int cols, c
 		blockSize = autoSetBlockSize(ones_matrix_kernel<Type>);
 		gridSize = (total_elements + blockSize - 1) / blockSize;
 		ones_matrix_kernel<Type> << <gridSize, blockSize >> > (mat, total_elements);
+		cudaDeviceSynchronize();
 		break;
 	case Identity:
 		if (rows != cols)
@@ -67,40 +84,192 @@ CudaMatrix<Type>::CudaMatrix(const unsigned int rows, const unsigned int cols, c
 		blockSize = autoSetBlockSize(identity_matrix_kernel<Type>);
 		gridSize = (rows + blockSize - 1) / blockSize;
 		identity_matrix_kernel<Type> << <gridSize, blockSize >> > (mat, rows);
+		cudaDeviceSynchronize();
 		break;
-	case Random: //
+	case Random:
+		start = clock();
 		blockSize = autoSetBlockSize(setup_random_kernel);
+		//cout << "Block size of setup random kernel: " << blockSize << endl;
 		gridSize = (total_elements + blockSize - 1) / blockSize;
-		cudaMalloc((void**)&states, total_elements * sizeof(curandState));
+		cudaMalloc((void**)&states, total_elements * sizeof(curandStatePhilox4_32_10_t));
 		setup_random_kernel << <gridSize, blockSize >> > (states, time(0), total_elements);
-		if constexpr (is_floating_point<Type>::value)
+		cudaDeviceSynchronize();
+		time_used_gen_init += clock() - start;
+		start = clock();
+		if constexpr (is_same<Type, float>::value)
 		{
-			blockSize = autoSetBlockSize(random_matrix_kernel<Type>);
+			time_used_switch_type += clock() - start;
+			start = clock();
+			blockSize = autoSetBlockSize(float_random_matrix_kernel);
+			//cout << "Block size of float random kernel: " << blockSize << endl;
 			gridSize = (total_elements + blockSize - 1) / blockSize;
+			time_used_setblock += clock() - start;
+			start = clock();
 			float_random_matrix_kernel << <gridSize, blockSize >> >
 				((float*)mat, total_elements, states);
+			cudaDeviceSynchronize();
+			time_used_gen += clock() - start;
+			start = clock();
 		}
 		else if constexpr (is_same<Type, double>::value)
 		{
+			time_used_switch_type += clock() - start;
+			start = clock();
 			blockSize = autoSetBlockSize(double_random_matrix_kernel);
+			//cout << "Block size of double random kernel: " << blockSize << endl;
 			gridSize = (total_elements + blockSize - 1) / blockSize;
+			time_used_setblock += clock() - start;
+			start = clock();
 			double_random_matrix_kernel << <gridSize, blockSize >> >
 				((double*)mat, total_elements, states);
+			cudaDeviceSynchronize();
+			time_used_gen += clock() - start;
+			start = clock();
+		}
+		else if constexpr (is_same<Type, int>::value)
+		{
+			time_used_switch_type += clock() - start;
+			start = clock();
+			blockSize = autoSetBlockSize(int_random_matrix_kernel);
+			//cout << "Block size of int random kernel: " << blockSize << endl;
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			time_used_setblock += clock() - start;
+			start = clock();
+			int_random_matrix_kernel << <gridSize, blockSize >> >
+				((int*)mat, total_elements, states);
+			cudaDeviceSynchronize();
+			time_used_gen += clock() - start;
+			start = clock();
 		}
 		else
 		{
+			total_elements = static_cast<size_t>(rows) * cols * sizeof(Type) / sizeof(int);
+			//cudaFree(states);
+			cudaMalloc((void**)&states, total_elements * sizeof(curandStatePhilox4_32_10_t));
+			setup_random_kernel << <gridSize, blockSize >> > (states, time(0), total_elements);
+			cudaDeviceSynchronize();
+			time_used_gen_init += clock() - start;
+			start = clock();
 			blockSize = autoSetBlockSize(int_random_matrix_kernel);
+			//cout << "Block size of int random kernel: " << blockSize << endl;
 			gridSize = (total_elements + blockSize - 1) / blockSize;
+			time_used_setblock += clock() - start;
+			start = clock();
 			int_random_matrix_kernel << <gridSize, blockSize >> >
 				((int*)mat, total_elements, states);
+			cudaDeviceSynchronize();
+			time_used_gen += clock() - start;
+			start = clock();
 		}
 		cudaFree(states);
+		break;
+	case QuasiRandom:
+		start = clock();
+		if constexpr (is_same<Type, float>::value)
+		{
+			blockSize = autoSetBlockSize(setup_q32random_kernel);
+			//cout << "Block size of setup random kernel: " << blockSize << endl;
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			cudaMalloc((void**)&qstates32, total_elements * sizeof(curandStateScrambledSobol32_t));
+			cudaMalloc((void**)&dr_vec32, cols * sizeof(curandDirectionVectors32_t));
+			curandGetDirectionVectors32(&dr_vec32, CURAND_SCRAMBLED_DIRECTION_VECTORS_32_JOEKUO6);
+			setup_q32random_kernel << <gridSize, blockSize >> > (qstates32, dr_vec32, rows, cols);
+			cudaDeviceSynchronize();
+			time_used_gen_init += clock() - start;
+			start = clock();
+			blockSize = autoSetBlockSize(float_qrandom_matrix_kernel);
+			//cout << "Block size of float random kernel: " << blockSize << endl;
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			time_used_setblock += clock() - start;
+			start = clock();
+			float_qrandom_matrix_kernel << <gridSize, blockSize >> >((float*)mat, qstates32, rows, cols);
+			cudaDeviceSynchronize();
+			time_used_gen += clock() - start;
+			start = clock();
+			cudaFree(qstates32);
+			cudaFree(dr_vec32);
+		}
+		else if constexpr (is_same<Type, double>::value)
+		{
+			blockSize = autoSetBlockSize(setup_q64random_kernel);
+			//cout << "Block size of setup random kernel: " << blockSize << endl;
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			cudaMalloc((void**)&qstates64, total_elements * sizeof(curandStateScrambledSobol64_t));
+			cudaMalloc((void**)&dr_vec64, cols * sizeof(curandDirectionVectors64_t));
+			curandGetDirectionVectors64(&dr_vec64, CURAND_SCRAMBLED_DIRECTION_VECTORS_64_JOEKUO6);
+			setup_q64random_kernel << <gridSize, blockSize >> > (qstates64, dr_vec64, rows, cols);
+			cudaDeviceSynchronize();
+			time_used_gen_init += clock() - start;
+			start = clock();
+			blockSize = autoSetBlockSize(double_qrandom_matrix_kernel);
+			//cout << "Block size of double random kernel: " << blockSize << endl;
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			time_used_setblock += clock() - start;
+			start = clock();
+			double_qrandom_matrix_kernel << <gridSize, blockSize >> >
+				((double*)mat, qstates64, rows, cols);
+			cudaDeviceSynchronize();
+			time_used_gen += clock() - start;
+			start = clock();
+			cudaFree(qstates64);
+			cudaFree(dr_vec64);
+		}
+		else if constexpr (is_same<Type, int>::value)
+		{
+			blockSize = autoSetBlockSize(setup_q32random_kernel);
+			//cout << "Block size of setup random kernel: " << blockSize << endl;
+			//system("pause");
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			cudaMalloc((void**)&qstates32, total_elements * sizeof(curandStateScrambledSobol32_t));
+			cudaMalloc((void**)&dr_vec32, cols * sizeof(curandDirectionVectors32_t));
+			curandGetDirectionVectors32(&dr_vec32, CURAND_SCRAMBLED_DIRECTION_VECTORS_32_JOEKUO6);
+			setup_q32random_kernel << <gridSize, blockSize >> > (qstates32, dr_vec32, rows, cols);
+			cudaDeviceSynchronize();
+			time_used_gen_init += clock() - start;
+			start = clock();
+			blockSize = autoSetBlockSize(int_qrandom_matrix_kernel);
+			cout << "Block size of int random kernel: " << blockSize << endl;
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			time_used_setblock += clock() - start;
+			start = clock();
+			int_qrandom_matrix_kernel << <gridSize, blockSize >> >((int*)mat, qstates32, rows, cols);
+			cudaDeviceSynchronize();
+			time_used_gen += clock() - start;
+			start = clock();
+			cudaFree(qstates32);
+			cudaFree(dr_vec32);
+		}
+		else
+		{
+			total_elements = static_cast<size_t>(rows) * cols * sizeof(Type) / sizeof(int);
+			cudaMalloc((void**)&qstates32, total_elements * sizeof(curandStateScrambledSobol32_t));
+			cudaMalloc((void**)&dr_vec32, cols * sizeof(curandDirectionVectors32_t));
+			curandGetDirectionVectors32(&dr_vec32, CURAND_SCRAMBLED_DIRECTION_VECTORS_32_JOEKUO6);
+			setup_q32random_kernel << <gridSize, blockSize >> > (qstates32, dr_vec32, rows, cols);
+			cudaDeviceSynchronize();
+			time_used_gen_init += clock() - start;
+			start = clock();
+			blockSize = autoSetBlockSize(int_qrandom_matrix_kernel);
+			//cout << "Block size of int random kernel: " << blockSize << endl;
+			gridSize = (total_elements + blockSize - 1) / blockSize;
+			time_used_setblock += clock() - start;
+			start = clock();
+			int_qrandom_matrix_kernel << <gridSize, blockSize >> >
+				((int*)mat, qstates32, rows, cols);
+			cudaDeviceSynchronize();
+			time_used_gen += clock() - start;
+			start = clock();
+			cudaFree(qstates32);
+			cudaFree(dr_vec32);
+		}
 		break;
 	default:
 		throw runtime_error("Unknown matrix type.");
 	}
+	cudaDeviceSynchronize();
 	cublasCreate_v2(&handle);
 	cusolverDnCreate(&solver_handle);
+	time_used_end += clock() - start;
 }
 
 template <typename Type>
@@ -135,12 +304,12 @@ template <typename Type>
 CudaMatrix<Type>::~CudaMatrix()
 {
 	cudaMemset(mat, 0, static_cast<size_t>(rows) * cols * sizeof(Type));
-	rows = 0;
-	cols = 0;
 	cudaFree(mat);
-	mat = nullptr;
 	cublasDestroy_v2(handle);
 	cusolverDnDestroy(solver_handle);
+	rows = 0;
+	cols = 0;
+	mat = nullptr;
 }
 
 template<typename Type>
@@ -158,7 +327,7 @@ template<typename Type>
 void CudaMatrix<Type>::print()
 {
 	Type* host_data = new Type[rows * cols];
-	CUDA_CHECK(cudaMemcpy(host_data, mat, rows * cols * sizeof(Type), cudaMemcpyDeviceToHost));
+	cudaMemcpy(host_data, mat, static_cast<size_t>(rows) * cols * sizeof(Type), cudaMemcpyDeviceToHost);
 	for (int i = 0; i < rows; i++)
 	{
 		for (int j = 0; j < cols; j++)

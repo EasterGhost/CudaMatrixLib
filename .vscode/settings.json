@@ -1,0 +1,12 @@
+{
+    "c-cpp-compile-run.output-location": "x64/debug",
+    "c-cpp-compile-run.cpp-flags": "-Wall -Wextra -g3 -O2",
+    "c-cpp-compile-run.c-flags": "-Wall -Wextra -g3 -O3",
+    "files.associations": {
+        "*.c": "c",
+        "*.md": "markdown",
+        "*.cu": "cuda-cpp",
+        "*.cuh": "cuda-cpp",
+        "thread": "cpp"
+    }
+}
