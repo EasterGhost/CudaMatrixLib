@@ -1,4 +1,6 @@
-﻿#include "kernel_function.cu"
+﻿#pragma once
+
+#include "kernel_function.cu"
 #include "kernel_function.cuh"
 #include "TemplateCudaMatrix.cuh"
 

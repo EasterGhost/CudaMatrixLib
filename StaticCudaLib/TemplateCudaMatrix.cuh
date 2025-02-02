@@ -2,8 +2,8 @@
 * @file TemplateCudaMatrix.cuh
 * @brief CUDA 矩阵类头文件
 * @note 使用 cuBLAS 实现矩阵运算
-* @date 2024-12-16
-* @version 1.0
+* @date 2025-2-16
+* @version 2.0
 * @author Andrew Elizabeth
 * @copyright MIT License
 * @note 本文件中的代码仅支持在 CUDA 环境下编译和运行

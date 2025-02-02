@@ -2,6 +2,7 @@
 #include "TemplateCudaMatrix.cuh"
 #include <iostream>
 #include <thread>
+
 template <typename Type>
 vector<Type> operator + (const vector<Type>& a, const vector<Type>& b)
 {
@@ -21,6 +22,28 @@ vector<Type> operator - (const vector<Type>& a, const vector<Type>& b)
 	vector<Type> result(a.size());
 	for (int i = 0; i < a.size(); i++)
 		result[i] = a[i] - b[i];
+	return result;
+}
+
+template <typename Type>
+vector<Type> operator * (const vector<Type>& a, const vector<Type>& b)
+{
+	if (a.size() != b.size())
+		throw runtime_error("Invalid vector multiplication.");
+	vector<Type> result(a.size());
+	for (int i = 0; i < a.size(); i++)
+		result[i] = a[i] * b[i];
+	return result;
+}
+
+template <typename Type>
+vector<Type> operator / (const vector<Type>& a, const vector<Type>& b)
+{
+	if (a.size() != b.size())
+		throw runtime_error("Invalid vector division.");
+	vector<Type> result(a.size());
+	for (int i = 0; i < a.size(); i++)
+		result[i] = a[i] / b[i];
 	return result;
 }
 
@@ -73,6 +96,9 @@ static void randomMatrixGenerationTestDemo()
 	CudaMatrix<double> m2(10, Random);
 	cout << "Double Matrix Test." << endl;
 	m2.print();
+	CudaMatrix<uint8_t> m3(10, Random);
+	cout << "Char Matrix Test." << endl;
+	m3.print();
 	return;
 }
 

@@ -7,7 +7,11 @@
 #include <curand_philox4x32_x.h>
 #include <curand_uniform.h>
 #include <device_launch_parameters.h>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 #include <type_traits>
+#include <vector>
 
 using namespace std;
 
