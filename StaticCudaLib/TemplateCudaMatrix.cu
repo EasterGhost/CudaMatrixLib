@@ -299,10 +299,10 @@ CudaMatrix<Type>::CudaMatrix(CudaMatrix&& other) noexcept
 	other.rows = 0;
 	other.cols = 0;
 	other.mat = nullptr;
-	cublasCreate_v2(&handle);
-	cusolverDnCreate(&solver_handle);
-	cublasDestroy_v2(other.handle);
-	cusolverDnDestroy(other.solver_handle);
+	handle = other.handle;
+	solver_handle = other.solver_handle;
+	other.handle = nullptr;
+	other.solver_handle = nullptr;
 }
 
 template <typename Type>
@@ -344,10 +344,10 @@ CudaMatrix<Type>& CudaMatrix<Type>::operator=(CudaMatrix&& other) noexcept
 	other.rows = 0;
 	other.cols = 0;
 	other.mat = nullptr;
-	cublasCreate_v2(&handle);
-	cusolverDnCreate(&solver_handle);
-	cublasDestroy_v2(other.handle);
-	cusolverDnDestroy(other.solver_handle);
+	handle = other.handle;
+	solver_handle = other.solver_handle;
+	other.handle = nullptr;
+	other.solver_handle = nullptr;
 	return *this;
 }
 
@@ -412,6 +412,133 @@ bool CudaMatrix<Type>::empty() const noexcept { return (mat == nullptr || size()
 template<typename Type>
 constexpr size_t CudaMatrix<Type>::max_size() const noexcept { return numeric_limits<size_t>::max() / sizeof(value_type); }
 
+template<typename Type>Type& CudaMatrix<Type>::front()
+{
+	if (empty())
+		throw runtime_error("Matrix is empty.");
+	value_type res = 0;
+	cudaMemcpy(&res, mat, sizeof(value_type), cudaMemcpyDeviceToHost);
+	return res;
+}
+
+template<typename Type>
+const Type& CudaMatrix<Type>::front() const
+{
+	if (empty())
+		throw runtime_error("Matrix is empty.");
+	value_type res = 0;
+	cudaMemcpy(&res, mat, sizeof(value_type), cudaMemcpyDeviceToHost);
+	return res;
+}
+
+template<typename Type>
+Type& CudaMatrix<Type>::back()
+{
+	if (empty())
+		throw runtime_error("Matrix is empty.");
+	value_type res = 0;
+	cudaMemcpy(&res, mat + static_cast<size_t>(rows) * cols - 1, sizeof(value_type), cudaMemcpyDeviceToHost);
+	return res;
+}
+
+template<typename Type>
+const Type& CudaMatrix<Type>::back() const
+{
+	if (empty())
+		throw runtime_error("Matrix is empty.");
+	value_type res = 0;
+	cudaMemcpy(&res, mat + static_cast<size_t>(rows) * cols - 1, sizeof(value_type), cudaMemcpyDeviceToHost);
+	return res;
+}
+
+template<typename Type>
+void CudaMatrix<Type>::clear() noexcept
+{
+	if (IS_SAFE_DATA) cudaMemset(mat, 0, static_cast<size_t>(rows) * cols * sizeof(value_type));
+	cudaFree(mat);
+	rows = 0;
+	cols = 0;
+	mat = nullptr;
+}
+
+template<typename Type>
+void CudaMatrix<Type>::swap(CudaMatrix<value_type>& other) noexcept
+{
+	swap(rows, other.rows);
+	swap(cols, other.cols);
+	swap(mat, other.mat);
+}
+
+template<typename Type>
+void CudaMatrix<Type>::assign(const CudaMatrix<value_type>& other)
+{
+	if (this == &other)
+		return;
+	if (mat != nullptr)
+		cudaFree(mat);
+	rows = other.rows;
+	cols = other.cols;
+	cudaMalloc((void**)&mat, static_cast<size_t>(rows) * cols * sizeof(value_type));
+	cudaMemcpy(mat, other.mat, static_cast<size_t>(rows) * cols * sizeof(value_type), cudaMemcpyDeviceToDevice);
+}
+
+template<typename Type>
+void CudaMatrix<Type>::assign(CudaMatrix<value_type>&& other) noexcept
+{
+	if (this == &other)
+		return;
+	if (mat != nullptr)
+		cudaFree(mat);
+	rows = other.rows;
+	cols = other.cols;
+	mat = other.mat;
+	other.rows = 0;
+	other.cols = 0;
+	other.mat = nullptr;
+}
+
+template<typename Type>
+void CudaMatrix<Type>::assign(const uint32_t rows, const uint32_t cols, const_reference val)
+{
+	if (mat != nullptr)
+		cudaFree(mat);
+	this->rows = rows;
+	this->cols = cols;
+	cudaMalloc((void**)&mat, static_cast<size_t>(rows) * cols * sizeof(value_type));
+	int blockSize = autoSetBlockSize(assign_kernel<value_type>);
+	int gridSize = (rows * cols + blockSize - 1) / blockSize;
+	assign_kernel<value_type> << <gridSize, blockSize >> >
+		(mat, val, rows * cols);
+	cudaDeviceSynchronize();
+}
+
+template<typename Type>
+void CudaMatrix<Type>::assign(const uint32_t size, const_reference val) { assign(size, size, val); }
+
+template<typename Type>
+void CudaMatrix<Type>::assign(const initializer_list<value_type>& il)
+{
+	if (mat != nullptr)
+		cudaFree(mat);
+	rows = il.size();
+	cols = 1;
+	cudaMalloc((void**)&mat, static_cast<size_t>(rows) * cols * sizeof(value_type));
+	cudaMemcpy(mat, il.begin(), static_cast<size_t>(rows) * cols * sizeof(value_type), cudaMemcpyHostToDevice);
+}
+
+template<typename Type>
+void CudaMatrix<Type>::insert(const uint32_t rows, const uint32_t cols, const_reference val)
+{
+	if (rows == 0 || cols == 0)
+		throw runtime_error("Invalid matrix size.");
+	if (this.rows * this.cols < rows * cols)
+	{
+		resize(rows, cols);
+		set(rows, cols, val);
+		return;
+	}
+}
+
 template<typename Type>
 void CudaMatrix<Type>::set(const uint32_t row, const uint32_t col, const value_type value)
 {
@@ -427,7 +554,7 @@ template<typename Type>
 const Type* CudaMatrix<Type>::data() const noexcept { return const_cast<pointer>(this->mat); }
 
 template<typename Type>
-void CudaMatrix<Type>::printMatrix()
+void CudaMatrix<Type>::print_matrix()
 {
 	pointer host_data = new value_type[rows * cols];
 	cudaMemcpy(host_data, mat, static_cast<size_t>(rows) * cols * sizeof(value_type), cudaMemcpyDeviceToHost);
@@ -439,6 +566,23 @@ void CudaMatrix<Type>::printMatrix()
 	}
 	if (IS_SAFE_DATA) memset(host_data, 0, static_cast<size_t>(rows) * cols * sizeof(value_type));
 	delete[] host_data;
+}
+
+template<typename Type>
+string CudaMatrix<Type>::to_string() const
+{
+	pointer host_data = new value_type[rows * cols];
+	cudaMemcpy(host_data, mat, static_cast<size_t>(rows) * cols * sizeof(value_type), cudaMemcpyDeviceToHost);
+	string res;
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+			res += to_string(host_data[i * cols + j]) + " ";
+		res += "\n";
+	}
+	if (IS_SAFE_DATA) memset(host_data, 0, static_cast<size_t>(rows) * cols * sizeof(value_type));
+	delete[] host_data;
+	return res;
 }
 
 template<typename Type>
@@ -461,7 +605,7 @@ template<typename Type>
 void CudaMatrix<Type>::resize(const uint32_t size) noexcept { resize(size, size); }
 
 template<typename Type>
-void CudaMatrix<Type>::updateDimensions(const uint32_t rows, const uint32_t cols)
+void CudaMatrix<Type>::update_dimensions(const uint32_t rows, const uint32_t cols)
 {
 	if (this->rows * this->cols != rows * cols)
 		throw runtime_error("The number of elements in the matrix does not match the new shape.");
@@ -470,7 +614,7 @@ void CudaMatrix<Type>::updateDimensions(const uint32_t rows, const uint32_t cols
 }
 
 template<typename Type>
-void CudaMatrix<Type>::updateDimensions(const uint32_t size) { updateDimensions(size, size); }
+void CudaMatrix<Type>::update_dimensions(const uint32_t size) { update_dimensions(size, size); }
 
 template<typename Type>
 void CudaMatrix<Type>::reshape(const uint32_t rows, const uint32_t cols)
@@ -496,19 +640,19 @@ template<typename Type>
 void CudaMatrix<Type>::reshape(const uint32_t size) { reshape(size, size); }
 
 template<typename Type>
-unsigned int CudaMatrix<Type>::getRows() const { return rows; }
+unsigned int CudaMatrix<Type>::get_rows() const { return rows; }
 
 template<typename Type>
-unsigned int CudaMatrix<Type>::getCols() const { return cols; }
+unsigned int CudaMatrix<Type>::get_cols() const { return cols; }
 
 template<typename Type>
-void CudaMatrix<Type>::getData(pointer dst) const { cudaMemcpy(dst, mat, _msize(dst) * sizeof(value_type), cudaMemcpyDeviceToHost); }
+void CudaMatrix<Type>::get_data(pointer dst) const { cudaMemcpy(dst, mat, _msize(dst) * sizeof(value_type), cudaMemcpyDeviceToHost); }
 
 template<typename Type>
-void CudaMatrix<Type>::getData(vector<value_type>& dst) const { cudaMemcpy(dst.data(), mat, dst.size() * sizeof(value_type), cudaMemcpyDeviceToHost); }
+void CudaMatrix<Type>::get_data(vector<value_type>& dst) const { cudaMemcpy(dst.data(), mat, dst.size() * sizeof(value_type), cudaMemcpyDeviceToHost); }
 
 template<typename Type>
-void CudaMatrix<Type>::getData(vector<value_type>& dst, bool is_safesize) const
+void CudaMatrix<Type>::get_data(vector<value_type>& dst, bool is_safesize) const
 {
 	if (is_safesize && dst.size() < static_cast<size_t>(rows) * cols)
 		dst.resize(static_cast<size_t>(rows) * cols);
@@ -516,10 +660,10 @@ void CudaMatrix<Type>::getData(vector<value_type>& dst, bool is_safesize) const
 }
 
 template<typename Type>
-void CudaMatrix<Type>::setData(const pointer src) { cudaMemcpy(mat, src, _msize(src) * sizeof(value_type), cudaMemcpyHostToDevice); }
+void CudaMatrix<Type>::set_data(const pointer src) { cudaMemcpy(mat, src, _msize(src) * sizeof(value_type), cudaMemcpyHostToDevice); }
 
 template<typename Type>
-void CudaMatrix<Type>::setData(const vector<value_type>& src) { cudaMemcpy(mat, src.data(), src.size(), cudaMemcpyHostToDevice); }
+void CudaMatrix<Type>::set_data(const vector<value_type>& src) { cudaMemcpy(mat, src.data(), src.size(), cudaMemcpyHostToDevice); }
 
 template<typename Type>
 Type CudaMatrix<Type>::get(const uint32_t row, const uint32_t col) const

@@ -16,6 +16,9 @@
 using namespace std;
 
 template <typename Type>
+__global__ static void assign_kernel(Type* data, const Type value, const uint32_t size);
+
+template <typename Type>
 __global__ static void identity_matrix_kernel(Type* data, const uint32_t size);
 
 template <typename Type>

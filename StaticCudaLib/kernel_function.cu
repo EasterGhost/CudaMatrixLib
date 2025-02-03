@@ -1,6 +1,14 @@
 ﻿#pragma once
 #include "kernel_function.cuh"
 
+template<typename Type>
+__global__ static void assign_kernel(Type* data, const Type value, const uint32_t size)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < size)
+		data[idx] = value;
+}
+
 template <typename Type>
 __global__ static void identity_matrix_kernel(Type* data, const uint32_t size)
 {

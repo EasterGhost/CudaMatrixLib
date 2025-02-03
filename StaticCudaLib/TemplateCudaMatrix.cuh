@@ -130,7 +130,7 @@ public:
 	using reference = Type&;
 	using const_reference = const Type&;
 	/**
-	 * @brief 
+	 * @brief iterator typedefs
 	 */
 	using iterator = pointer;
 	/**
@@ -201,29 +201,42 @@ public:
 
 	constexpr size_type max_size() const noexcept;
 
+	reference front();
+	const_reference front() const;
+	reference back();
+	const_reference back() const;
+
+	void clear() noexcept;
+	void swap(CudaMatrix<value_type>& other) noexcept;
+	void assign(const CudaMatrix<value_type>& other);
+	void assign(CudaMatrix<value_type>&& other) noexcept;
+	void assign(const uint32_t rows, const uint32_t cols, const_reference val);
+	void assign(const uint32_t size, const_reference val);
+	void assign(const initializer_list<value_type>& il);
+	void insert(const uint32_t rows, const uint32_t cols, const_reference val);
 	/**
 	* @brief 获取矩阵行数
 	* @return 矩阵行数
 	*/
-	unsigned int getRows() const;
+	unsigned int get_rows() const;
 	/**
 	* @brief 获取矩阵列数
 	* @return 矩阵列数
 	*/
-	unsigned int getCols() const;
+	unsigned int get_cols() const;
 	/**
 	* @brief 获取矩阵数据
 	* @return 矩阵数据
 	*/
-	void getData(pointer dst) const;
-	void getData(vector<value_type>& dst) const;
-	void getData(vector<value_type>& dst, bool is_safesize) const;
+	void get_data(pointer dst) const;
+	void get_data(vector<value_type>& dst) const;
+	void get_data(vector<value_type>& dst, bool is_safesize) const;
 	/**
 	* @brief 设置矩阵数据
 	* @param[in] src 矩阵数据
 	*/
-	void setData(const pointer src);
-	void setData(const vector<value_type>& src);
+	void set_data(const pointer src);
+	void set_data(const vector<value_type>& src);
 	/**
 	* @brief 获取矩阵元素
 	* @param[in] i 行索引
@@ -243,16 +256,17 @@ public:
 
 	const_pointer data() const noexcept;
 
+	string to_string() const;
 	void print();
-	void printMatrix();
+	void print_matrix();
 
 	void resize(const uint32_t rows, const uint32_t cols) noexcept;
 
 	void resize(const uint32_t size) noexcept;
 
-	void updateDimensions(const uint32_t rows, const uint32_t cols);
+	void update_dimensions(const uint32_t rows, const uint32_t cols);
 
-	void updateDimensions(const uint32_t size);
+	void update_dimensions(const uint32_t size);
 
 	void reshape(const uint32_t rows, const uint32_t cols);
 
