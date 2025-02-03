@@ -519,6 +519,7 @@ void cudaMatrix<data_type>::resize(int rows, int cols)
 	data = new_data;
 	this->rows = rows;
 	this->cols = cols;
+	new_data = nullptr;
 }
 
 template <typename data_type>

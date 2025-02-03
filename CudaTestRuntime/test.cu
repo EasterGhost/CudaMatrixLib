@@ -257,9 +257,18 @@ static void qrandomMatrixGenerationTestDemo()
 int main()
 {
 	//randomMatrixGenerationTest();
-	randomMatrixGenerationTestDemo();
+	//randomMatrixGenerationTestDemo();
 	//qrandomMatrixGenerationTest();
 	//qrandomMatrixGenerationTestDemo();
+	CudaMatrix<float> m(10, Random);
+	vector<float> v(10);
+	vector<float> v2(10);
+	if (v == v2)
+		cout << "Equal" << endl;
+	else
+		cout << "Not Equal" << endl;
+	cout << v.max_size() << endl;
+	cout << m.max_size() << endl;
 	system("pause");
 	return 0;
 }

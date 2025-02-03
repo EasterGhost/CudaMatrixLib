@@ -17,7 +17,7 @@
 #endif // !NUM_THREADS
 
 #ifndef pi
-#define pi 3.1415926535897932
+#define pi 3.14159265358979323846
 #endif // !pi
 
 #ifndef O
@@ -27,6 +27,10 @@
 #ifndef FORCE_SAFE_SIZE
 #define FORCE_SAFE_SIZE true
 #endif // !FORCE_SAFE_SIZE
+
+#ifndef IS_SAFE_DATA
+#define IS_SAFE_DATA true
+#endif // !IS_SAFE_DATA
 
 #ifndef CUDA_CHECK
 #define CUDA_CHECK(call) \
@@ -58,6 +62,7 @@
 #include <curand_kernel.h>
 #include <curand_uniform.h>
 using namespace std;
+
 /**
 * @brief 矩阵类型
 * @enum MatrixType
@@ -107,13 +112,27 @@ static dim3 autoSetBlockSize2D(T func, int rows, int cols);
 template <typename Type>
 class CudaMatrix
 {
-private:
-	unsigned int rows, cols;
-	Type* mat; /// 矩阵数据
-	cublasHandle_t handle; /// cuBLAS 句柄
-	cusolverDnHandle_t solver_handle; /// cuSOLVER 句柄
-	//cudaStream_t stream; /// CUDA 流
 public:
+	/**
+	* @brief basic typedefs
+	*/
+	using value_type = Type;
+	using size_type = size_t;
+	using difference_type = ptrdiff_t;
+	/**
+	* @brief pointer typedefs
+	*/
+	using pointer = Type*;
+	using const_pointer = const Type*;
+	/**
+	* @brief reference typedefs
+	*/
+	using reference = Type&;
+	using const_reference = const Type&;
+	/**
+	 * @brief 
+	 */
+	using iterator = pointer;
 	/**
 	 * @brief 默认构造函数
 	 */
@@ -123,32 +142,65 @@ public:
 	 * @param rows 矩阵行数
 	 * @param cols 矩阵列数
 	 */
-	CudaMatrix(const unsigned int rows, const unsigned int cols);
-	CudaMatrix(const unsigned int size);
+	CudaMatrix(const uint32_t rows, const uint32_t cols);
+	explicit CudaMatrix(const uint32_t size);
 	/**
 	 * @brief 参数化构造函数（指定类型）
 	 * @param rows 矩阵行数
 	 * @param cols 矩阵列数
 	 * @param type 矩阵类型
 	 */
-	CudaMatrix(const unsigned int rows, const unsigned int cols, const MatrixType type);
-	CudaMatrix(const unsigned int size, const MatrixType type);
+	CudaMatrix(const uint32_t rows, const uint32_t cols, const MatrixType type);
+	CudaMatrix(const uint32_t size, const MatrixType type);
 	/**
 	 * @brief 数据构造函数
 	 * @param rows 矩阵行数
 	 * @param cols 矩阵列数
 	 * @param data 矩阵数据
 	 */
-	CudaMatrix(const unsigned int rows, const unsigned int cols, const Type* src);
-	CudaMatrix(const unsigned int rows, const unsigned int cols, const vector<Type>& src);
-	CudaMatrix(const unsigned int size, const Type* src);
-	CudaMatrix(const unsigned int size, const vector<Type>& src);
+	CudaMatrix(const uint32_t rows, const uint32_t cols, const pointer src);
+	CudaMatrix(const uint32_t rows, const uint32_t cols, const vector<value_type>& src);
+	CudaMatrix(const uint32_t size, const pointer src);
+	CudaMatrix(const uint32_t size, const vector<value_type>& src);
+
+	/**
+	 * @brief 移动构造函数
+	 * @param other 另一个cuda矩阵
+	 */
+	CudaMatrix(CudaMatrix&& other) noexcept;
 	/**
 	 * @brief 拷贝构造函数
 	 * @param other 另一个cuda矩阵
 	 */
-	CudaMatrix(const CudaMatrix<Type>& other);
+	CudaMatrix(const CudaMatrix<value_type>& other);
+	/**
+	 * @brief 拷贝赋值运算符
+	 * @param other 另一个cuda矩阵
+	 * @return 当前cuda矩阵
+	 */
+	CudaMatrix& operator=(const CudaMatrix<value_type>& other);
+	/**
+	 * @brief 移动赋值运算符
+	 * @param other 另一个cuda矩阵
+	 * @return 当前cuda矩阵
+	 */
+	CudaMatrix& operator=(CudaMatrix&& other) noexcept;
+	/**
+	* @brief 析构函数
+	*/
 	~CudaMatrix();
+
+	/**
+	* @brief 重载运算符
+	*/
+	bool operator==(const CudaMatrix<value_type>& other) const;
+	bool operator!=(const CudaMatrix<value_type>& other) const;
+	size_type size() const noexcept;
+
+	bool empty() const noexcept;
+
+	constexpr size_type max_size() const noexcept;
+
 	/**
 	* @brief 获取矩阵行数
 	* @return 矩阵行数
@@ -163,32 +215,58 @@ public:
 	* @brief 获取矩阵数据
 	* @return 矩阵数据
 	*/
-	void getData(Type* dst) const;
+	void getData(pointer dst) const;
+	void getData(vector<value_type>& dst) const;
+	void getData(vector<value_type>& dst, bool is_safesize) const;
 	/**
 	* @brief 设置矩阵数据
-	* @param[in] data 矩阵数据
+	* @param[in] src 矩阵数据
 	*/
-	void setData(const vector<Type>& src);
+	void setData(const pointer src);
+	void setData(const vector<value_type>& src);
 	/**
 	* @brief 获取矩阵元素
 	* @param[in] i 行索引
 	* @param[in] j 列索引
 	* @return 矩阵元素
 	*/
-	Type get(const unsigned int row, const unsigned int col) const;
+	value_type get(const uint32_t row, const uint32_t col) const;
 	/**
 	* @brief 设置矩阵元素
 	* @param[in] i 行索引
 	* @param[in] j 列索引
 	* @param[in] value 元素值
 	*/
-	void set(const unsigned int row, const unsigned int col, const Type value);
+	void set(const uint32_t row, const uint32_t col, const value_type value);
 
-	Type* data() const;
+	pointer data() noexcept;
+
+	const_pointer data() const noexcept;
 
 	void print();
+	void printMatrix();
+
+	void resize(const uint32_t rows, const uint32_t cols) noexcept;
+
+	void resize(const uint32_t size) noexcept;
+
+	void updateDimensions(const uint32_t rows, const uint32_t cols);
+
+	void updateDimensions(const uint32_t size);
+
+	void reshape(const uint32_t rows, const uint32_t cols);
+
+	void reshape(const uint32_t size);
 
 	template<typename T>
 	void add(const CudaMatrix<T>& other);
+
+private:
+	unsigned int rows, cols; /// 矩阵行数和列数
+	pointer mat; /// 矩阵数据
+	cublasHandle_t handle; /// cuBLAS 句柄
+	cusolverDnHandle_t solver_handle; /// cuSOLVER 句柄
+	//cudaStream_t stream; /// CUDA 流
+
 };
 #endif // !TEMPLATE_CUDA_MATRIX_H

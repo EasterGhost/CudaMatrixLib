@@ -3,3 +3,6 @@
 #define __device_builtin__ __location__(device_builtin)
 #define __location__(a) __annotate__(a)
 #define __location__(a) __annotate__(__##a##__)
+#define __annotate__(a) __attribute__((a))
+#define __annotate__(a) __declspec(a)
+#define __annotate__(a)
