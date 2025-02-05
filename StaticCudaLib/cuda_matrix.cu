@@ -352,6 +352,8 @@ CudaMatrix<Type>::~CudaMatrix()
 	cols = 0;
 	mat = nullptr;
 	cudaDeviceSynchronize();
+	cudaFree(handle);
+	cudaFree(solver_handle);
 	//cublasDestroy_v2(handle);
 	//cusolverDnDestroy(solver_handle);
 }
