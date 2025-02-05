@@ -1,6 +1,5 @@
-﻿#include "A:\Andrew Elizabeth\source\repos\EasterGhost\CudaMatrixLib\StaticCudaLib\TemplateCudaMatrix.cu"
-#include "A:\Andrew Elizabeth\source\repos\EasterGhost\CudaMatrixLib\StaticCudaLib\TemplateCudaMatrix.cuh"
-#include <iostream>
+﻿#include "cuda_matrix.cu"
+#include "cuda_matrix.cuh"
 #include <thread>
 
 template <typename Type>

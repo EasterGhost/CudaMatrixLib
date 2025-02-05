@@ -7,13 +7,6 @@
 #include <curand_philox4x32_x.h>
 #include <curand_uniform.h>
 #include <device_launch_parameters.h>
-#include <iostream>
-#include <stdexcept>
-#include <string>
-#include <type_traits>
-#include <vector>
-
-using namespace std;
 
 template <typename T1, typename T2>
 __global__ static void convert_kernel(const T1* src, T2* res, const size_t size);

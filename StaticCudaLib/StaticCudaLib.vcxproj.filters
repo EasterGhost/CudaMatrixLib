@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="TemplateCudaMatrix.cu">
+    <CudaCompile Include="cuda_matrix.cu">
       <Filter>源文件</Filter>
     </CudaCompile>
     <CudaCompile Include="kernel_function.cu">
@@ -23,7 +23,7 @@
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TemplateCudaMatrix.cuh">
+    <ClInclude Include="cuda_matrix.cuh">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="kernel_function.cuh">

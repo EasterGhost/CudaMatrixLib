@@ -2,7 +2,7 @@
 
 #include "kernel_function.cu"
 #include "kernel_function.cuh"
-#include "TemplateCudaMatrix.cuh"
+#include "cuda_matrix.cuh"
 
 extern clock_t time_used_init = 0;
 extern clock_t time_used_gen_init = 0;

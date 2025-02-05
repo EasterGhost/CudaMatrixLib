@@ -20,11 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="kernel_function.cu" />
-    <CudaCompile Include="TemplateCudaMatrix.cu" />
+    <CudaCompile Include="cuda_matrix.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kernel_function.cuh" />
-    <ClInclude Include="TemplateCudaMatrix.cuh" />
+    <ClInclude Include="cuda_matrix.cuh" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
