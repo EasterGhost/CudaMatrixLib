@@ -15,35 +15,38 @@
 
 using namespace std;
 
-template <typename Type>
-__global__ static void assign_kernel(Type* data, const Type value, const uint32_t size);
+template <typename T1, typename T2>
+__global__ static void convert_kernel(const T1* src, T2* res, const size_t size);
 
 template <typename Type>
-__global__ static void identity_matrix_kernel(Type* data, const uint32_t size);
+__global__ static void assign_kernel(Type* data, const Type value, const size_t size);
 
 template <typename Type>
-__global__ static void ones_matrix_kernel(Type* data, const uint32_t total_elements);
+__global__ static void identity_matrix_kernel(Type* data, const size_t size);
+
+template <typename Type>
+__global__ static void ones_matrix_kernel(Type* data, const size_t total_elements);
 
 __global__ static void float_random_matrix_kernel
-(float* data, const uint32_t total_elements, curandStatePhilox4_32_10_t* states);
+(float* data, const size_t total_elements, curandStatePhilox4_32_10_t* states);
 
 __global__ static void float_qrandom_matrix_kernel
 (float* data, curandStateScrambledSobol32_t* states, const uint32_t n, const uint32_t dimensions);
 
 __global__ static void double_random_matrix_kernel
-(double* data, const uint32_t total_elements, curandStatePhilox4_32_10_t* states);
+(double* data, const size_t total_elements, curandStatePhilox4_32_10_t* states);
 
 __global__ static void double_qrandom_matrix_kernel
 (double* data, curandStateScrambledSobol64_t* states, const uint32_t n, const uint32_t dimensions);
 
 __global__ static void int_random_matrix_kernel
-(int* data, const uint32_t total_elements, curandStatePhilox4_32_10_t* states);
+(int* data, const size_t total_elements, curandStatePhilox4_32_10_t* states);
 
 __global__ static void int_qrandom_matrix_kernel
 (int* data, curandStateScrambledSobol32_t* states, const uint32_t n, const uint32_t dimensions);
 
 __global__ static void setup_random_kernel
-(curandStatePhilox4_32_10_t* state, size_t seed, const uint32_t size);
+(curandStatePhilox4_32_10_t* state, size_t seed, const size_t size);
 
 __global__ static void setup_q32random_kernel
 (curandStateScrambledSobol32_t* states, curandDirectionVectors32_t* dr_vec, const uint32_t size, const uint32_t dimensions);

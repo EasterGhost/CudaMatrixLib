@@ -201,12 +201,11 @@ public:
 	*/
 	bool operator==(const CudaMatrix<value_type>& other) const;
 	bool operator!=(const CudaMatrix<value_type>& other) const;
-	size_type size() const noexcept;
 
 	bool empty() const noexcept;
 
 	constexpr size_type max_size() const noexcept;
-
+	
 	reference front();
 	const_reference front() const;
 	reference back();
@@ -221,16 +220,29 @@ public:
 	void assign(const uint32_t size, const_reference val);
 	void assign(const initializer_list<value_type>& il);
 	void insert(const uint32_t rows, const uint32_t cols, const_reference val);
+	value_type at(const uint32_t rows, const uint32_t cols) const;
+	size_type capacity() const noexcept;
+	size_type size() const noexcept;
+	template <typename T>
+	operator CudaMatrix<T>() const
+	{
+		CudaMatrix<T> result(rows, cols);
+		int blockSize = autoSetBlockSize(convert_kernel<Type, T>);
+		int gridSize = (rows * cols + blockSize - 1) / blockSize;
+		convert_kernel<Type, T> << <gridSize, blockSize >> > (this->mat, result.data(), rows * cols);
+		cudaDeviceSynchronize();
+		return result;
+	}
 	/**
 	* @brief 获取矩阵行数
 	* @return 矩阵行数
 	*/
-	unsigned int get_rows() const;
+	uint32_t row_count() const;
 	/**
 	* @brief 获取矩阵列数
 	* @return 矩阵列数
 	*/
-	unsigned int get_cols() const;
+	uint32_t col_count() const;
 	/**
 	* @brief 获取矩阵数据
 	* @return 矩阵数据
@@ -330,5 +342,3 @@ private:
 
 };
 #endif // !TEMPLATE_CUDA_MATRIX_H
-
-

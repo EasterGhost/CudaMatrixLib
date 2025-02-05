@@ -1,8 +1,15 @@
-﻿#pragma once
-#include "kernel_function.cuh"
+﻿#include "kernel_function.cuh"
+
+template<typename T1, typename T2>
+__global__ static void convert_kernel(const T1* src, T2* res, const size_t size)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < size)
+		res[idx] = static_cast<T2>(src[idx]);
+}
 
 template<typename Type>
-__global__ static void assign_kernel(Type* data, const Type value, const uint32_t size)
+__global__ static void assign_kernel(Type* data, const Type value, const size_t size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
@@ -10,7 +17,7 @@ __global__ static void assign_kernel(Type* data, const Type value, const uint32_
 }
 
 template <typename Type>
-__global__ static void identity_matrix_kernel(Type* data, const uint32_t size)
+__global__ static void identity_matrix_kernel(Type* data, const size_t size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
@@ -18,7 +25,7 @@ __global__ static void identity_matrix_kernel(Type* data, const uint32_t size)
 }
 
 template <typename Type>
-__global__ static void ones_matrix_kernel(Type* data, const uint32_t total_elements)
+__global__ static void ones_matrix_kernel(Type* data, const size_t total_elements)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < total_elements)
@@ -26,7 +33,7 @@ __global__ static void ones_matrix_kernel(Type* data, const uint32_t total_eleme
 }
 
 __global__ static void float_random_matrix_kernel
-(float* data, const uint32_t total_elements, curandStatePhilox4_32_10_t* states)
+(float* data, const size_t total_elements, curandStatePhilox4_32_10_t* states)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < total_elements)
@@ -43,7 +50,7 @@ __global__ static void float_qrandom_matrix_kernel
 }
 
 __global__ static void double_random_matrix_kernel
-(double* data, const uint32_t total_elements, curandStatePhilox4_32_10_t* states)
+(double* data, const size_t total_elements, curandStatePhilox4_32_10_t* states)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < total_elements)
@@ -60,7 +67,7 @@ __global__ static void double_qrandom_matrix_kernel
 }
 
 __global__ static void int_random_matrix_kernel
-(int* data, const uint32_t total_elements, curandStatePhilox4_32_10_t* states)
+(int* data, const size_t total_elements, curandStatePhilox4_32_10_t* states)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < total_elements)
@@ -77,7 +84,7 @@ __global__ static void int_qrandom_matrix_kernel
 }
 
 __global__ static void setup_random_kernel
-(curandStatePhilox4_32_10_t* states, size_t seed, const uint32_t size)
+(curandStatePhilox4_32_10_t* states, size_t seed, const size_t size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
