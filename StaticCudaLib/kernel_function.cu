@@ -119,7 +119,7 @@ template<typename Type> __global__ static void matrix_transpose_kernel
 }
 
 template <typename Type> __global__ void elementwise_equal_kernel
-(const Type* src1, const Type* src2, char* res, const uint32_t size)
+(const Type* src1, const Type* src2, char* res, const size_t size)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)

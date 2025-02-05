@@ -12,6 +12,15 @@
 
 #pragma once
 
+#ifndef time_used
+#define time_used
+extern clock_t time_used_init = 0;
+extern clock_t time_used_gen_init = 0;
+extern clock_t time_used_gen = 0;
+extern clock_t time_used_switch_type = 0;
+extern clock_t time_used_setblock = 0;
+extern clock_t time_used_end = 0;
+#endif // !time_used
 #ifndef NUM_THREADS
 #define NUM_THREADS 96
 #endif // !NUM_THREADS
@@ -233,42 +242,14 @@ public:
 		cudaDeviceSynchronize();
 		return result;
 	}
-	/**
-	* @brief 获取矩阵行数
-	* @return 矩阵行数
-	*/
 	uint32_t row_count() const;
-	/**
-	* @brief 获取矩阵列数
-	* @return 矩阵列数
-	*/
 	uint32_t col_count() const;
-	/**
-	* @brief 获取矩阵数据
-	* @return 矩阵数据
-	*/
 	void get_data(pointer dst) const;
 	void get_data(vector<value_type>& dst) const;
 	void get_data(vector<value_type>& dst, bool is_safesize) const;
-	/**
-	* @brief 设置矩阵数据
-	* @param[in] src 矩阵数据
-	*/
 	void set_data(const pointer src);
 	void set_data(const vector<value_type>& src);
-	/**
-	* @brief 获取矩阵元素
-	* @param[in] i 行索引
-	* @param[in] j 列索引
-	* @return 矩阵元素
-	*/
 	value_type get(const uint32_t row, const uint32_t col) const;
-	/**
-	* @brief 设置矩阵元素
-	* @param[in] i 行索引
-	* @param[in] j 列索引
-	* @param[in] value 元素值
-	*/
 	void set(const uint32_t row, const uint32_t col, const value_type value);
 
 	pointer data() noexcept;

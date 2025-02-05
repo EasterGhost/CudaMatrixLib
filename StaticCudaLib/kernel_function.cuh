@@ -53,7 +53,7 @@ __global__ static void matrix_transpose_kernel
 
 template <typename Type>
 __global__ static void elementwise_equal_kernel
-(const Type* src1, const Type* src2, bool* res, const uint32_t size);
+(const Type* src1, const Type* src2, char* res, const size_t size);
 
 template <typename Type> __global__ static void col_vec_broadcast_kernel
 (const Type* src_vec, Type* res, const uint32_t size, const uint32_t cols);

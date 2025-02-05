@@ -4,13 +4,6 @@
 #include "kernel_function.cuh"
 #include "cuda_matrix.cuh"
 
-extern clock_t time_used_init = 0;
-extern clock_t time_used_gen_init = 0;
-extern clock_t time_used_gen = 0;
-extern clock_t time_used_switch_type = 0;
-extern clock_t time_used_setblock = 0;
-extern clock_t time_used_end = 0;
-
 template <class T>
 static int autoSetBlockSize(T func)
 {
