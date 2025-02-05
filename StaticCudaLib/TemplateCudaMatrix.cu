@@ -452,6 +452,26 @@ const Type& CudaMatrix<Type>::back() const
 }
 
 template<typename Type>
+Type CudaMatrix<Type>::operator[](const coord_t coord) const
+{
+	if (coord.x >= rows || coord.y >= cols)
+		throw out_of_range("Index out of range.");
+	value_type res = 0;
+	cudaMemcpy(&res, mat + coord.x * rows + coord.y, sizeof(value_type), cudaMemcpyDeviceToHost);
+	return res;
+}
+
+template<typename Type>
+Type CudaMatrix<Type>::operator[](const uint32_t index) const
+{
+	if (index >= static_cast<size_t>(rows) * cols)
+		throw out_of_range("Index out of range.");
+	value_type res = 0;
+	cudaMemcpy(&res, mat + index, sizeof(value_type), cudaMemcpyDeviceToHost);
+	return res;
+}
+
+template<typename Type>
 void CudaMatrix<Type>::clear() noexcept
 {
 	if (IS_SAFE_DATA) cudaMemset(mat, 0, static_cast<size_t>(rows) * cols * sizeof(value_type));

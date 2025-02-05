@@ -63,6 +63,12 @@
 #include <curand_uniform.h>
 using namespace std;
 
+typedef struct coord_t
+{
+	uint32_t x;
+	uint32_t y;
+}coord_t;
+
 /**
 * @brief 矩阵类型
 * @enum MatrixType
@@ -205,7 +211,8 @@ public:
 	const_reference front() const;
 	reference back();
 	const_reference back() const;
-
+	value_type operator[](const coord_t coord) const;
+	value_type operator[](const uint32_t index) const;
 	void clear() noexcept;
 	void swap(CudaMatrix<value_type>& other) noexcept;
 	void assign(const CudaMatrix<value_type>& other);
