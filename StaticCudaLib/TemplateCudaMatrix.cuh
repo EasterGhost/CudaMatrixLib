@@ -264,6 +264,7 @@ public:
 	const_pointer data() const noexcept;
 
 	string to_string() const;
+
 	void print();
 	void print_matrix();
 
@@ -279,11 +280,49 @@ public:
 
 	void reshape(const uint32_t size);
 
-	template<typename T>
-	void add(const CudaMatrix<T>& other);
+	class ElementProxy
+	{
+	private:
+		CudaMatrix<Type>& mat;
+		uint32_t row;
+		uint32_t col;
 
+	public:
+		/**
+		 * @brief 代理类构造函数
+		 * @param mat 矩阵
+		 * @param row 矩阵行索引
+		 * @param col 矩阵列索引
+		 */
+		ElementProxy(CudaMatrix<Type>& mat, uint32_t row, uint32_t col) : mat(mat), row(row), col(col) {}
+
+		/**
+		 * @brief 代理类析构函数
+		 */
+		~ElementProxy();
+
+		/**
+		 * @brief 重载类型转换运算符
+		 * @return 矩阵元素值
+		 */
+		operator Type();
+		/**
+		 * @brief 重载赋值运算符
+		 * @param value 待赋值的数据
+		 * @return 矩阵元素值
+		 */
+		ElementProxy& operator=(Type value);
+	};
+
+	/**
+	* @brief 重载 () 运算符，实现矩阵元素的访问和赋值
+	* @param row 行索引
+	* @param col 列索引
+	* @return 矩阵代理类
+	*/
+	ElementProxy operator()(uint32_t row, uint32_t col);
 private:
-	unsigned int rows, cols; /// 矩阵行数和列数
+	uint32_t rows, cols; /// 矩阵行数和列数
 	pointer mat; /// 矩阵数据
 	cublasHandle_t handle; /// cuBLAS 句柄
 	cusolverDnHandle_t solver_handle; /// cuSOLVER 句柄
@@ -291,3 +330,5 @@ private:
 
 };
 #endif // !TEMPLATE_CUDA_MATRIX_H
+
+

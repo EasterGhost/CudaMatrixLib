@@ -260,8 +260,9 @@ int main()
 	//randomMatrixGenerationTestDemo();
 	//qrandomMatrixGenerationTest();
 	//qrandomMatrixGenerationTestDemo();
-	CudaMatrix<float> m(10, Random);
-	cout<<m[{0,0}];
+	CudaMatrix<float> A(10, Random);
+	A(2, 3) = 1;
+	cout << A(2, 3) << endl;
 	system("pause");
 	return 0;
 }

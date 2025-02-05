@@ -371,14 +371,14 @@ bool CudaMatrix<Type>::operator==(const CudaMatrix<value_type>& other) const
 	int total_elements = rows * cols;
 	int blockSize = autoSetBlockSize(elementwise_equal_kernel<value_type>);
 	int gridSize = (total_elements + blockSize - 1) / blockSize;
-	bool* res = nullptr;
-	cudaMalloc((void**)&res, total_elements * sizeof(bool));
+	char* res = nullptr;
+	cudaMalloc((void**)&res, total_elements * sizeof(char));
 	elementwise_equal_kernel<value_type> << <gridSize, blockSize >> >
 		(mat, other.mat, res, total_elements);
 	cudaDeviceSynchronize();
-	vector<bool> host_res(total_elements);
-	cudaMemcpy(host_res.data(), res, total_elements * sizeof(bool), cudaMemcpyDeviceToHost);
-	bool result = all_of(host_res.begin(), host_res.end(), [](bool x) { return x; });
+	vector<char> host_res(total_elements);
+	cudaMemcpy(host_res.data(), res, total_elements * sizeof(char), cudaMemcpyDeviceToHost);
+	bool result = all_of(host_res.begin(), host_res.end(), [](char x) { return x; });
 	cudaFree(res);
 	return result;
 }
@@ -391,14 +391,14 @@ bool CudaMatrix<Type>::operator!=(const CudaMatrix<value_type>& other) const
 	int total_elements = rows * cols;
 	int blockSize = autoSetBlockSize(elementwise_equal_kernel<value_type>);
 	int gridSize = (total_elements + blockSize - 1) / blockSize;
-	bool* res = nullptr;
-	cudaMalloc((void**)&res, total_elements * sizeof(bool));
+	char* res = nullptr;
+	cudaMalloc((void**)&res, total_elements * sizeof(char));
 	elementwise_equal_kernel<value_type> << <gridSize, blockSize >> >
 		(mat, other.mat, res, total_elements);
 	cudaDeviceSynchronize();
-	vector<bool> host_res(total_elements);
+	vector<char> host_res(total_elements);
 	cudaMemcpy(host_res.data(), res, total_elements * sizeof(bool), cudaMemcpyDeviceToHost);
-	bool result = any_of(host_res.begin(), host_res.end(), [](bool x) { return !x; });
+	bool result = any_of(host_res.begin(), host_res.end(), [](char x) { return !x; });
 	cudaFree(res);
 	return result;
 }
@@ -551,7 +551,7 @@ void CudaMatrix<Type>::insert(const uint32_t rows, const uint32_t cols, const_re
 {
 	if (rows == 0 || cols == 0)
 		throw runtime_error("Invalid matrix size.");
-	if (this.rows * this.cols < rows * cols)
+	if (this->rows * this->cols < rows * cols)
 	{
 		resize(rows, cols);
 		set(rows, cols, val);
@@ -606,7 +606,7 @@ string CudaMatrix<Type>::to_string() const
 }
 
 template<typename Type>
-void CudaMatrix<Type>::print() { printMatrix(); }
+void CudaMatrix<Type>::print() { print_matrix(); }
 
 template<typename Type>
 void CudaMatrix<Type>::resize(const uint32_t rows, const uint32_t cols) noexcept
@@ -660,6 +660,14 @@ template<typename Type>
 void CudaMatrix<Type>::reshape(const uint32_t size) { reshape(size, size); }
 
 template<typename Type>
+CudaMatrix<Type>::ElementProxy CudaMatrix<Type>::operator()(uint32_t row, uint32_t col)
+{
+	if (row >= rows || col >= cols)
+		throw out_of_range("Index out of range.");
+	return ElementProxy(*this, row, col);
+}
+
+template<typename Type>
 unsigned int CudaMatrix<Type>::get_rows() const { return rows; }
 
 template<typename Type>
@@ -696,14 +704,21 @@ Type CudaMatrix<Type>::get(const uint32_t row, const uint32_t col) const
 }
 
 template<typename Type>
-template<typename T>
-void CudaMatrix<Type>::add(const CudaMatrix<T>& other)
+CudaMatrix<Type>::ElementProxy::~ElementProxy()
 {
-	if (rows != other.rows || cols != other.cols)
-		throw runtime_error("Matrix size does not match.");
-	int total_elements = rows * cols;
-	int blockSize = autoSetBlockSize(elementwise_add_kernel<value_type, T, value_type>);
-	int gridSize = (total_elements + blockSize - 1) / blockSize;
-	elementwise_add_kernel<value_type, T, value_type> << <gridSize, blockSize >> >
-		(mat, other.mat, mat, total_elements);
+	row = 0;
+	col = 0;
 }
+
+template<typename Type>
+CudaMatrix<Type>::ElementProxy::operator Type() { return mat.get(row, col); }
+
+template<typename Type>
+CudaMatrix<Type>::ElementProxy& CudaMatrix<Type>::ElementProxy::operator=(Type value)
+{
+	mat.set(row, col, value);
+	return *this;
+}
+
+
+
