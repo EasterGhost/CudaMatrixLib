@@ -26,6 +26,9 @@
     <ClInclude Include="kernel_function.cuh" />
     <ClInclude Include="cuda_matrix.cuh" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -129,8 +132,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
-      <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <LanguageStandard>stdcpp23</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -141,6 +144,10 @@
       <PerformDeviceLinkTimeOptimization>true</PerformDeviceLinkTimeOptimization>
     </CudaLink>
     <CudaCompile />
+    <CudaCompile>
+      <CodeGeneration>compute_89,sm_89</CodeGeneration>
+      <InterleaveSourceInPTX>true</InterleaveSourceInPTX>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

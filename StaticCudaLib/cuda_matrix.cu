@@ -1,6 +1,4 @@
-﻿#pragma once
-
-#include "kernel_function.cu"
+﻿#include "kernel_function.cu"
 #include "kernel_function.cuh"
 #include "cuda_matrix.cuh"
 
@@ -62,7 +60,7 @@ CudaMatrix<Type>::CudaMatrix(const uint32_t rows, const uint32_t cols, const Mat
 		break;
 	case Ones:
 		blockSize = autoSetBlockSize(ones_matrix_kernel<value_type>);
-		gridSize = (total_elements + blockSize - 1) / blockSize;
+		gridSize = static_cast<int>((total_elements + blockSize - 1) / (size_t)blockSize);
 		ones_matrix_kernel<value_type> << <gridSize, blockSize >> > (mat, total_elements);
 		cudaDeviceSynchronize();
 		break;
@@ -79,7 +77,7 @@ CudaMatrix<Type>::CudaMatrix(const uint32_t rows, const uint32_t cols, const Mat
 		start = clock();
 		blockSize = autoSetBlockSize(setup_random_kernel);
 		//cout << "Block size of setup random kernel: " << blockSize << endl;
-		gridSize = (total_elements + blockSize - 1) / blockSize;
+		gridSize = static_cast<int>((total_elements + blockSize - 1) / (size_t)blockSize);
 		cudaMalloc((void**)&states, total_elements * sizeof(curandStatePhilox4_32_10_t));
 		setup_random_kernel << <gridSize, blockSize >> > (states, time(0), total_elements);
 		cudaDeviceSynchronize();
@@ -91,7 +89,7 @@ CudaMatrix<Type>::CudaMatrix(const uint32_t rows, const uint32_t cols, const Mat
 			start = clock();
 			blockSize = autoSetBlockSize(float_random_matrix_kernel);
 			//cout << "Block size of float random kernel: " << blockSize << endl;
-			gridSize = (total_elements + blockSize - 1) / blockSize;
+			gridSize = static_cast<int>((total_elements + blockSize - 1) / (size_t)blockSize);
 			time_used_setblock += clock() - start;
 			start = clock();
 			float_random_matrix_kernel << <gridSize, blockSize >> >
@@ -121,7 +119,7 @@ CudaMatrix<Type>::CudaMatrix(const uint32_t rows, const uint32_t cols, const Mat
 			start = clock();
 			blockSize = autoSetBlockSize(int_random_matrix_kernel);
 			//cout << "Block size of int random kernel: " << blockSize << endl;
-			gridSize = (total_elements + blockSize - 1) / blockSize;
+			gridSize = static_cast<int>((total_elements + blockSize - 1) / (size_t)blockSize);
 			time_used_setblock += clock() - start;
 			start = clock();
 			int_random_matrix_kernel << <gridSize, blockSize >> >

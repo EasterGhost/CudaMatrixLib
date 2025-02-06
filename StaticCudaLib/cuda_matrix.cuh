@@ -11,16 +11,16 @@
 */
 
 #pragma once
-
-#ifndef time_used
-#define time_used
+#include <ctime>
+#ifndef TIME_USED
+#define TIME_USED
 extern clock_t time_used_init = 0;
 extern clock_t time_used_gen_init = 0;
 extern clock_t time_used_gen = 0;
 extern clock_t time_used_switch_type = 0;
 extern clock_t time_used_setblock = 0;
 extern clock_t time_used_end = 0;
-#endif // !time_used
+#endif // !tTIME_USED
 #ifndef NUM_THREADS
 #define NUM_THREADS 96
 #endif // !NUM_THREADS
@@ -63,7 +63,6 @@ extern clock_t time_used_end = 0;
 #include <string>
 #include <device_launch_parameters.h>
 #include <cuda_runtime_api.h>
-#include <ctime>
 #include <cstdarg>
 #include <curand.h>
 #include <curand_philox4x32_x.h>
