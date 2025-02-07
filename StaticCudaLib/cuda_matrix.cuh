@@ -147,6 +147,9 @@ public:
 	 * @brief iterator typedefs
 	 */
 	using iterator = pointer;
+	using const_iterator = const_pointer;
+	using reverse_iterator = std::reverse_iterator<iterator>;
+	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 	/**
 	 * @brief 默认构造函数
 	 */
@@ -231,6 +234,20 @@ public:
 	value_type at(const uint32_t rows, const uint32_t cols) const;
 	size_type capacity() const noexcept;
 	size_type size() const noexcept;
+
+	iterator begin() noexcept { return mat; }
+	const_iterator begin() const noexcept { return mat; }
+	const_iterator cbegin() const noexcept { return mat; }
+	iterator end() noexcept { return mat + rows * cols; }
+	const_iterator end() const noexcept { return mat + rows * cols; }
+	const_iterator cend() const noexcept { return mat + rows * cols; }
+	reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+	const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
+	const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
+	reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
+	const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
+	const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
+
 	template <typename T>
 	operator CudaMatrix<T>() const
 	{
