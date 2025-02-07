@@ -1,4 +1,10 @@
-﻿#include "kernel_function.cu"
+﻿/*****************************************************************//**
+ * \file   cuda_matrix.cu
+ * \brief  CUDA-accelerated matrix operations implementation providing optimized matrix computations and manipulations on GPU.
+ * \author AndrewElizabeth
+ * \date   February 2025
+ *********************************************************************/
+#include "kernel_function.cu"
 #include "kernel_function.cuh"
 #include "cuda_matrix.cuh"
 

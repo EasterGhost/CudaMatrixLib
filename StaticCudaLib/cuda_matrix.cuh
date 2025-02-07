@@ -1,14 +1,34 @@
-﻿/**
-* @file TemplateCudaMatrix.cuh
-* @brief CUDA 矩阵类头文件
-* @note 使用 cuBLAS 实现矩阵运算
-* @date 2025-2-16
-* @version 2.0
-* @author Andrew Elizabeth
-* @copyright MIT License
-* @note 本文件中的代码仅支持在 CUDA 环境下编译和运行
-* @example examples/cuda_matrix_example.cpp
-*/
+﻿/*****************************************************************//**
+* \file   cuda_matrix.cuh
+ * \brief  Implementation of a CUDA-based matrix template class that provides
+ *         high-performance matrix operations and computations.
+ *
+ * \details Key features:
+ *          - Supports various matrix initialization types (zero, identity, random)
+ *          - Provides basic matrix operations
+ *          - Implements efficient CUDA memory management
+ *          - Integrates cuBLAS and cuSOLVER for accelerated computations
+ *          - Supports safe element access and modification
+ *          - Implements row-major matrix storage
+ *          - Template-based implementation for different data types
+ *          - RAII-compliant resource management
+ *          - STL-compatible iterators
+ *          - Thread-safe operations
+ *
+ * This class encapsulates CUDA kernel functions and matrix operations,
+ * providing a high-level interface for GPU-accelerated matrix computations.
+ *
+ * \author AndrewElizabeth
+ * \date   February 2025
+ *
+ * \requirements
+ *     - CUDA Runtime API
+ *     - cuBLAS library
+ *     - cuSOLVER library
+ *
+ * \note Thread safety is ensured through CUDA synchronization primitives
+ * \warning Requires CUDA-capable hardware and proper CUDA environment setup
+ *********************************************************************/
 
 #pragma once
 #include <ctime>

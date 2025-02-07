@@ -1,4 +1,13 @@
-﻿#pragma once
+﻿/*****************************************************************//**
+ * \file   kernel_function.cuh
+ * \brief  CUDA kernel functions for matrix operations
+ * \details Contains device kernel functions for basic matrix operations, assignment,
+ *          conversion, random matrix generation, element-wise operations, broadcasting,
+ *			and matrix multiplication.
+ * \author AndrewElizabeth
+ * \date   February 2025
+ *********************************************************************/
+#pragma once
 #ifndef KERNEL_FUNCTION_H
 #define KERNEL_FUNCTION_H
 #include <crt/host_defines.h>
@@ -47,12 +56,10 @@ __global__ static void setup_q32random_kernel
 __global__ static void setup_q64random_kernel
 (curandStateScrambledSobol64_t* states, curandDirectionVectors64_t* dr_vec, const uint32_t n, const uint32_t dimensions);
 
-template <typename Type>
-__global__ static void matrix_transpose_kernel
+template <typename Type> __global__ static void matrix_transpose_kernel
 (const Type* src, Type* res, const uint32_t rows, const uint32_t cols);
 
-template <typename Type>
-__global__ static void elementwise_equal_kernel
+template <typename Type> __global__ static void elementwise_equal_kernel
 (const Type* src1, const Type* src2, char* res, const size_t size);
 
 template <typename Type> __global__ static void col_vec_broadcast_kernel
