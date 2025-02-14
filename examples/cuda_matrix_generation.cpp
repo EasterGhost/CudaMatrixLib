@@ -9,7 +9,7 @@
 #include "cuda_matrix.cuh"
 #include "cuda_matrix.cu"
 
-int main()
+void cuda_matrix_generation()
 {
 	CudaMatrix<int> A(3, 4, Random); // Generate a random matrix A with 3 rows and 4 columns
 	CudaMatrix<float> B(3, Identity); // Generate an identity matrix B with 3 rows and 3 columns
@@ -30,5 +30,5 @@ int main()
 	E.print();
 	cout << "Copy Matrix F:" << endl;
 	F.print();
-	return 0;
+	return;
 }

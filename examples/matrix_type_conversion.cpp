@@ -8,7 +8,7 @@
 #include "cuda_matrix.cuh"
 #include "cuda_matrix.cu"
 
-int main()
+void matrix_type_conversion()
 {
     CudaMatrix<double> A(3, 4, Random); /// Generate a random matrix A
     /// Modify some elements of matrix A
@@ -25,5 +25,5 @@ int main()
     C = A; /// Convert matrix A to an integer matrix C using the assignment operator
     cout << "Matrix C:" << endl;
     C.print();
-    return 0;
+    return;
 }

@@ -8,7 +8,7 @@
 #include "cuda_matrix.cuh"
 #include "cuda_matrix.cu"
 
-int main()
+void matrix_elementwise_access()
 {
     CudaMatrix<float> A(3, 4, Random); /// Generate a random matrix A
     /// Modify some elements of matrix A using the () operator
@@ -18,5 +18,5 @@ int main()
     cout << "Random Matrix A:" << endl;
     A.print();
     cout << "A(0, 0): " << A(0, 0) << endl; /// Access elements of matrix A using the () operator
-    return 0;
+    return;
 }

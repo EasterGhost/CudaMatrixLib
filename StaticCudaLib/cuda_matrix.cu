@@ -4,8 +4,6 @@
  * \author AndrewElizabeth
  * \date   February 2025
  *********************************************************************/
-#include "kernel_function.cu"
-#include "kernel_function.cuh"
 #include "cuda_matrix.cuh"
 
 template <class T>
@@ -350,16 +348,17 @@ CudaMatrix<Type>& CudaMatrix<Type>::operator=(CudaMatrix&& other) noexcept
 template <typename Type>
 CudaMatrix<Type>::~CudaMatrix()
 {
-	if (IS_SAFE_DATA) cudaMemset(mat, 0, static_cast<size_t>(rows) * cols * sizeof(value_type));
+	if (IS_SAFE_DATA)
+		cudaMemset(mat, 0, static_cast<size_t>(rows) * cols * sizeof(value_type));
 	cudaFree(mat);
 	rows = 0;
 	cols = 0;
 	mat = nullptr;
-	cudaDeviceSynchronize();
-	cudaFree(handle);
-	cudaFree(solver_handle);
-	//cublasDestroy_v2(handle);
-	//cusolverDnDestroy(solver_handle);
+	//cudaDeviceSynchronize();
+	//cudaFree(handle);
+	//cudaFree(solver_handle);
+	cublasDestroy_v2(handle);
+	cusolverDnDestroy(solver_handle);
 }
 
 template<typename Type>

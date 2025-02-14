@@ -89,6 +89,8 @@ extern clock_t time_used_end = 0;
 #include <driver_types.h>
 #include <curand_kernel.h>
 #include <curand_uniform.h>
+#include "kernel_function.cu"
+#include "kernel_function.cuh"
 using namespace std;
 
 typedef struct coord_t

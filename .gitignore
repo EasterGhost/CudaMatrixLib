@@ -35,7 +35,9 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
-
+[Ee]xample/
+# [Ee]xamples/
+[Bb]uild/
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 .vscode/

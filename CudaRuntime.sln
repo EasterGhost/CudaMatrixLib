@@ -10,8 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CudaTestRuntime", "CudaTest
 		{A76C7266-E4FA-4D71-B167-BEA9E47D7766} = {A76C7266-E4FA-4D71-B167-BEA9E47D7766}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CudaRuntime", "CudaRuntime\CudaRuntime.vcxproj", "{D42ECA1D-A7AC-4797-8A64-C481E858E93D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CUDA12.8|x64 = CUDA12.8|x64
@@ -31,12 +29,6 @@ Global
 		{5618FEC3-1B8C-4C0E-A438-64B84529F555}.Debug|x64.Build.0 = Debug|x64
 		{5618FEC3-1B8C-4C0E-A438-64B84529F555}.Release|x64.ActiveCfg = Release|x64
 		{5618FEC3-1B8C-4C0E-A438-64B84529F555}.Release|x64.Build.0 = Release|x64
-		{D42ECA1D-A7AC-4797-8A64-C481E858E93D}.CUDA12.8|x64.ActiveCfg = Debug|x64
-		{D42ECA1D-A7AC-4797-8A64-C481E858E93D}.CUDA12.8|x64.Build.0 = Debug|x64
-		{D42ECA1D-A7AC-4797-8A64-C481E858E93D}.Debug|x64.ActiveCfg = Debug|x64
-		{D42ECA1D-A7AC-4797-8A64-C481E858E93D}.Debug|x64.Build.0 = Debug|x64
-		{D42ECA1D-A7AC-4797-8A64-C481E858E93D}.Release|x64.ActiveCfg = Release|x64
-		{D42ECA1D-A7AC-4797-8A64-C481E858E93D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
