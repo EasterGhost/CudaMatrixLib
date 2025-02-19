@@ -1,6 +1,7 @@
 ﻿/*****************************************************************//**
  * \file   cuda_matrix.cu
- * \brief  CUDA-accelerated matrix operations implementation providing optimized matrix computations and manipulations on GPU.
+ * \brief  CUDA-accelerated matrix operations implementation providing
+		   optimized matrix computations and manipulations on GPU.
  * \author AndrewElizabeth
  * \date   February 2025
  *********************************************************************/
