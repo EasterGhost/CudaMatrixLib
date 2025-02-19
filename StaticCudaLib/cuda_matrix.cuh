@@ -50,7 +50,7 @@ extern clock_t time_used_end = 0;
 #endif // !pi
 
 #ifndef O
-#define O CudaMatrix(1)
+#define O cumatrix(1)
 #endif // !O
 
 #ifndef FORCE_SAFE_SIZE
@@ -142,11 +142,59 @@ template<class T>
 static dim3 autoSetBlockSize2D(T func, int rows, int cols);
 
 /**
+* @brief CUDA 内存分配器
+* @tparam T 数据类型
+*/
+template <typename T>
+class cuda_allocator {
+public:
+	using value_type = T;
+	using pointer = T*;
+	using const_pointer = const T*;
+	using reference = T&;
+	using const_reference = const T&;
+	using size_type = std::size_t;
+	using difference_type = std::ptrdiff_t;
+
+	// 重绑定类型
+	template <typename U>
+	struct rebind { using other = cuda_allocator<U>; };
+
+	cuda_allocator() = default;
+	template <typename U>
+	cuda_allocator(const cuda_allocator<U>&) noexcept {}
+
+	// 分配 GPU 内存
+	pointer allocate(size_type n)
+	{
+		pointer p;
+		CUDA_CHECK(cudaMalloc((void**)&p, n * sizeof(T)));
+		return p;
+	}
+
+	// 释放 GPU 内存
+	void deallocate(pointer p, size_type) noexcept { CUDA_CHECK(cudaFree(p)); }
+
+	// 在 GPU 上构造对象
+	template<typename U, typename... Args>
+	void construct(U* p, Args&&... args)
+	{
+		// 在主机上创建临时对象
+		U temp(std::forward<Args>(args)...);
+		CUDA_CHECK(cudaMemcpy(p, &temp, sizeof(U), cudaMemcpyHostToDevice));
+	}
+
+	// 销毁 GPU 上的对象
+	template<typename U>
+	void destroy(U*) noexcept {} // do nothing
+};
+
+/**
 * @brief CUDA 行优先矩阵类
-* @class cudaMatrix
+* @class cumatrix
 */
 template <typename Type>
-class CudaMatrix
+class cumatrix
 {
 public:
 	/**
@@ -172,73 +220,74 @@ public:
 	using const_iterator = const_pointer;
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+	using allocator_type = cuda_allocator<Type>;
 	/**
 	 * @brief 默认构造函数
 	 */
-	CudaMatrix();
+	cumatrix();
 	/**
 	 * @brief 参数化构造函数（0初始化）
 	 * @param rows 矩阵行数
 	 * @param cols 矩阵列数
 	 */
-	CudaMatrix(const uint32_t rows, const uint32_t cols);
-	explicit CudaMatrix(const uint32_t size);
+	cumatrix(const uint32_t rows, const uint32_t cols);
+	explicit cumatrix(const uint32_t size);
 	/**
 	 * @brief 参数化构造函数（指定类型）
 	 * @param rows 矩阵行数
 	 * @param cols 矩阵列数
 	 * @param type 矩阵类型
 	 */
-	CudaMatrix(const uint32_t rows, const uint32_t cols, const MatrixType type);
-	CudaMatrix(const uint32_t size, const MatrixType type);
+	cumatrix(const uint32_t rows, const uint32_t cols, const MatrixType type);
+	cumatrix(const uint32_t size, const MatrixType type);
 	/**
 	 * @brief 数据构造函数
 	 * @param rows 矩阵行数
 	 * @param cols 矩阵列数
 	 * @param data 矩阵数据
 	 */
-	CudaMatrix(const uint32_t rows, const uint32_t cols, const pointer src);
-	CudaMatrix(const uint32_t rows, const uint32_t cols, const vector<value_type>& src);
-	CudaMatrix(const uint32_t size, const pointer src);
-	CudaMatrix(const uint32_t size, const vector<value_type>& src);
+	cumatrix(const uint32_t rows, const uint32_t cols, const pointer src);
+	cumatrix(const uint32_t rows, const uint32_t cols, const vector<value_type>& src);
+	cumatrix(const uint32_t size, const pointer src);
+	cumatrix(const uint32_t size, const vector<value_type>& src);
 
 	/**
 	 * @brief 移动构造函数
 	 * @param other 另一个cuda矩阵
 	 */
-	CudaMatrix(CudaMatrix&& other) noexcept;
+	cumatrix(cumatrix&& other) noexcept;
 	/**
 	 * @brief 拷贝构造函数
 	 * @param other 另一个cuda矩阵
 	 */
-	CudaMatrix(const CudaMatrix<value_type>& other);
+	cumatrix(const cumatrix<value_type>& other);
 	/**
 	 * @brief 拷贝赋值运算符
 	 * @param other 另一个cuda矩阵
 	 * @return 当前cuda矩阵
 	 */
-	CudaMatrix& operator=(const CudaMatrix<value_type>& other);
+	cumatrix& operator=(const cumatrix<value_type>& other);
 	/**
 	 * @brief 移动赋值运算符
 	 * @param other 另一个cuda矩阵
 	 * @return 当前cuda矩阵
 	 */
-	CudaMatrix& operator=(CudaMatrix&& other) noexcept;
+	cumatrix& operator=(cumatrix&& other) noexcept;
 	/**
 	* @brief 析构函数
 	*/
-	~CudaMatrix();
+	~cumatrix();
 
 	/**
 	* @brief 重载运算符
 	*/
-	bool operator==(const CudaMatrix<value_type>& other) const;
-	bool operator!=(const CudaMatrix<value_type>& other) const;
+	bool operator==(const cumatrix<value_type>& other) const;
+	bool operator!=(const cumatrix<value_type>& other) const;
 
 	bool empty() const noexcept;
 
 	constexpr size_type max_size() const noexcept;
-	
+
 	reference front();
 	const_reference front() const;
 	reference back();
@@ -246,9 +295,9 @@ public:
 	value_type operator[](const coord_t coord) const;
 	value_type operator[](const uint32_t index) const;
 	void clear() noexcept;
-	void swap(CudaMatrix<value_type>& other) noexcept;
-	void assign(const CudaMatrix<value_type>& other);
-	void assign(CudaMatrix<value_type>&& other) noexcept;
+	void swap(cumatrix<value_type>& other) noexcept;
+	void assign(const cumatrix<value_type>& other);
+	void assign(cumatrix<value_type>&& other) noexcept;
 	void assign(const uint32_t rows, const uint32_t cols, const_reference val);
 	void assign(const uint32_t size, const_reference val);
 	void assign(const initializer_list<value_type>& il);
@@ -256,7 +305,7 @@ public:
 	value_type at(const uint32_t rows, const uint32_t cols) const;
 	size_type capacity() const noexcept;
 	size_type size() const noexcept;
-
+	void reserve(const size_type new_cap);
 	iterator begin() noexcept { return mat; }
 	const_iterator begin() const noexcept { return mat; }
 	const_iterator cbegin() const noexcept { return mat; }
@@ -271,17 +320,17 @@ public:
 	const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
 
 	template <typename T>
-	operator CudaMatrix<T>() const
+	operator cumatrix<T>() const
 	{
-		CudaMatrix<T> result(rows, cols);
+		cumatrix<T> result(rows, cols);
 		int blockSize = autoSetBlockSize(convert_kernel<Type, T>);
 		int gridSize = (rows * cols + blockSize - 1) / blockSize;
 		convert_kernel<Type, T> << <gridSize, blockSize >> > (this->mat, result.data(), rows * cols);
 		cudaDeviceSynchronize();
 		return result;
 	}
-	uint32_t row_count() const;
-	uint32_t col_count() const;
+	uint32_t rowcount() const;
+	uint32_t colcount() const;
 	void get_data(pointer dst) const;
 	void get_data(vector<value_type>& dst) const;
 	void get_data(vector<value_type>& dst, bool is_safesize) const;
@@ -314,7 +363,7 @@ public:
 	class ElementProxy
 	{
 	private:
-		CudaMatrix<Type>& mat;
+		cumatrix<Type>& mat;
 		uint32_t row;
 		uint32_t col;
 
@@ -325,7 +374,7 @@ public:
 		 * @param row 矩阵行索引
 		 * @param col 矩阵列索引
 		 */
-		ElementProxy(CudaMatrix<Type>& mat, uint32_t row, uint32_t col) : mat(mat), row(row), col(col) {}
+		ElementProxy(cumatrix<Type>& mat, uint32_t row, uint32_t col) : mat(mat), row(row), col(col) {}
 
 		/**
 		 * @brief 代理类析构函数
@@ -358,6 +407,16 @@ private:
 	cublasHandle_t handle; /// cuBLAS 句柄
 	cusolverDnHandle_t solver_handle; /// cuSOLVER 句柄
 	//cudaStream_t stream; /// CUDA 流
+	//curandGenerator_t gen; /// cuRAND 生成器
+	//curandStatePhilox4_32_10* states; /// cuRAND 状态
+	allocator_type allocator; /// 分配器
+	/**
+	* @brief 分配矩阵内存
+	* @param rows 矩阵行数
+	* @param cols 矩阵列数
+	*/
+	void allocate_matrix(const uint32_t rows, const uint32_t cols);
+	void deallocate_matrix() noexcept;
 
 };
 #endif // !TEMPLATE_CUDA_MATRIX_H
