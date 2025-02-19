@@ -701,14 +701,14 @@ void cumatrix<Type>::allocate_matrix(const uint32_t rows, const uint32_t cols)
 		cudaFree(mat);
 	this->rows = rows;
 	this->cols = cols;
-	allocator.allocate(static_cast<cuda_allocator<T>::size_type>(rows) * cols);
+	mat = allocator.allocate(static_cast<typename cuda_allocator<value_type>::size_type>(rows) * cols);
 }
 
 template<typename Type>
 void cumatrix<Type>::deallocate_matrix() noexcept
 {
 	if (mat != nullptr)
-		allocator.deallocate(mat, static_cast<cuda_allocator<T>::size_type>(rows) * cols);
+		allocator.deallocate(mat, static_cast<typename cuda_allocator<value_type>::size_type>(rows) * cols);
 	rows = 0;
 	cols = 0;
 	mat = nullptr;
