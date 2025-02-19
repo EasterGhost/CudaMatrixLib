@@ -18,7 +18,7 @@
  * This class encapsulates CUDA kernel functions and matrix operations,
  * providing a high-level interface for GPU-accelerated matrix computations.
  *
- * \author AndrewElizabeth
+ * \author AndrewElizabeth (easterghost1@gmail.com)
  * \date   February 2025
  *
  * \requirements
