@@ -1,7 +1,7 @@
 ﻿/**
  * @file matrix_type_conversion.cpp
  * @author Andrew Elizabeth (2934664277@qq.com)
- * @brief Example of converting a matrix of one type to another using the CudaMatrix class
+ * @brief Example of converting a matrix of one type to another using the cumatrix class
  * @version 1.0
  * @date 2025-02-13
  */
@@ -23,8 +23,8 @@ int main()
 	start = clock();
 	for (int i = 1; i <= num_tests; i++)
 	{
-		CudaMatrix<float> mat1(size, Random);
-		CudaMatrix<double> mat2(size);
+		cumatrix<float> mat1(size, Random);
+		cumatrix<double> mat2(size);
 		convert_kernel<float, double> << <convert_grid_size, convert_block_size >> >
 			(mat1.data(), mat2.data(), size * size);
 		cudaDeviceSynchronize();
@@ -41,9 +41,9 @@ int main()
 	start = clock();
 	for (int i = 1; i <= num_tests; i++)
 	{
-		CudaMatrix<float> mat1(size, Random);
-		CudaMatrix<double> mat2(size, Random);
-		CudaMatrix<float> mat3(size);
+		cumatrix<float> mat1(size, Random);
+		cumatrix<double> mat2(size, Random);
+		cumatrix<float> mat3(size);
 		elementwise_add_kernel<float, double, float> << <grid_size, block_size >> >
 			(mat1.data(), mat2.data(), mat3.data(), size * size);
 		cudaDeviceSynchronize();
@@ -60,9 +60,9 @@ int main()
 	start = clock();
 	for (int i = 1; i <= num_tests; i++)
 	{
-		CudaMatrix<float> mat1(size, Random);
-		CudaMatrix<double> mat2(size, Random);
-		CudaMatrix<float> mat3(size);
+		cumatrix<float> mat1(size, Random);
+		cumatrix<double> mat2(size, Random);
+		cumatrix<float> mat3(size);
 		elementwise_subtract_kernel<float, double, float> << <grid_size, block_size >> >
 			(mat1.data(), mat2.data(), mat3.data(), size * size);
 		cudaDeviceSynchronize();

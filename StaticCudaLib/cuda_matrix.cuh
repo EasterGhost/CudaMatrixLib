@@ -25,15 +25,17 @@
  *     - CUDA Runtime API
  *     - cuBLAS library
  *     - cuSOLVER library
+ *	   - cuRAND library
  *
  * \note Thread safety is ensured through CUDA synchronization primitives
  * \warning Requires CUDA-capable hardware and proper CUDA environment setup
  *********************************************************************/
 
 #pragma once
-#include <ctime>
+
 #ifndef TIME_USED
 #define TIME_USED
+#include <ctime>
 extern clock_t time_used_init = 0;
 extern clock_t time_used_gen_init = 0;
 extern clock_t time_used_gen = 0;
@@ -86,7 +88,7 @@ extern clock_t time_used_end = 0;
 #include "kernel_function.cuh"
 using namespace std;
 
-typedef struct coord_t
+typedef struct __device_builtin__ coord_t
 {
 	uint32_t x;
 	uint32_t y;
@@ -139,15 +141,16 @@ static dim3 autoSetBlockSize2D(T func, int rows, int cols);
 * @tparam T 数据类型
 */
 template <typename T>
-class cuda_allocator {
+class cuda_allocator
+{
 public:
 	using value_type = T;
 	using pointer = T*;
 	using const_pointer = const T*;
 	using reference = T&;
 	using const_reference = const T&;
-	using size_type = std::size_t;
-	using difference_type = std::ptrdiff_t;
+	using size_type = size_t;
+	using difference_type = ptrdiff_t;
 
 	// 重绑定类型
 	template <typename U>
@@ -299,6 +302,10 @@ public:
 	size_type capacity() const noexcept;
 	size_type size() const noexcept;
 	void reserve(const size_type new_cap);
+	/**
+	 * @brief 迭代器
+	 * @note 提供迭代器支持
+	 */
 	iterator begin() noexcept { return mat; }
 	const_iterator begin() const noexcept { return mat; }
 	const_iterator cbegin() const noexcept { return mat; }
@@ -399,9 +406,9 @@ private:
 	pointer mat; /// 矩阵数据
 	cublasHandle_t handle; /// cuBLAS 句柄
 	cusolverDnHandle_t solver_handle; /// cuSOLVER 句柄
-	//cudaStream_t stream; /// CUDA 流
-	//curandGenerator_t gen; /// cuRAND 生成器
-	//curandStatePhilox4_32_10* states; /// cuRAND 状态
+	cudaStream_t stream; /// CUDA 流
+	curandGenerator_t gen; /// cuRAND 生成器
+	curandStatePhilox4_32_10* rand_states; /// cuRAND 状态
 	allocator_type allocator; /// 分配器
 	/**
 	* @brief 分配矩阵内存
