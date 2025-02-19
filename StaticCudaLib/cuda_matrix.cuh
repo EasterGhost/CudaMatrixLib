@@ -41,13 +41,6 @@ extern clock_t time_used_switch_type = 0;
 extern clock_t time_used_setblock = 0;
 extern clock_t time_used_end = 0;
 #endif // !tTIME_USED
-#ifndef NUM_THREADS
-#define NUM_THREADS 96
-#endif // !NUM_THREADS
-
-#ifndef pi
-#define pi 3.14159265358979323846
-#endif // !pi
 
 #ifndef O
 #define O cumatrix(1)
