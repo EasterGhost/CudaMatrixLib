@@ -11,7 +11,7 @@ static int autoSetBlockSize(T func)
 {
 	int blockSize = 0;
 	int gridSize = 0;
-	cudaOccupancyMaxPotentialBlockSize(&gridSize, &blockSize, func, 0, 0);
+	cudaOccupancyMaxPotentialBlockSize(&gridSize, &blockSize, func);
 	//if (blockSize == 0)
 	//	throw runtime_error("Failed to set block size.");
 	return max(blockSize, 32);
@@ -22,7 +22,7 @@ static dim3 autoSetBlockSize2D(T func, const int rows, const int cols)
 {
 	int blockSize = 0;
 	int gridSize = 0;
-	cudaOccupancyMaxPotentialBlockSize(&gridSize, &blockSize, func, 0, 0);
+	cudaOccupancyMaxPotentialBlockSize(&gridSize, &blockSize, func);
 	if (blockSize == 0)
 		throw runtime_error("Failed to set block size.");
 	return dim3(blockSize, 1);
