@@ -170,7 +170,7 @@ __global__ static void elementwise_subtract_kernel
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < size)
-		res[idx] = (T3)(src1[idx] - src2[idx]);
+		res[idx] = (T3)src1[idx] - (T3)src2[idx];
 }
 
 template <typename T1, typename T2, typename T3>
@@ -231,17 +231,72 @@ template <typename T1, typename T2, typename T3>
 __global__ static void matrix_multiply_kernel
 (const T1* src1, const T2* src2, T3* res, const uint32_t rows1, const uint32_t cols1, const uint32_t cols2)
 {
-	int row = blockIdx.y * blockDim.y + threadIdx.y;
-	int col = blockIdx.x * blockDim.x + threadIdx.x;
-	int tid = blockIdx.z * blockDim.z + threadIdx.z;
-
-	if (row < rows1 && col < cols2)
+	const uint32_t row = blockIdx.x;
+	const uint32_t col = blockIdx.y;
+	extern __shared__ double shared_data[];
+	double partial_sum = 0;
+	const uint32_t tid = threadIdx.x;
+	const uint32_t blockSize = blockDim.x;
+	for (uint32_t i = tid; i < cols1; i += blockSize)
+		partial_sum = (double)src1[row * cols1 + i] * (double)src2[i * cols2 + col] + partial_sum;
+	shared_data[tid] = partial_sum;
+	__syncthreads();
+	for (uint32_t stride = blockSize / 2; stride > 0; stride >>= 1)
 	{
-		T3 sum = 0;
-		for (int i = 0; i < cols1; i++)
-			sum += src1[row * cols1 + i] * src2[i * cols2 + col];
-		res[row * cols2 + col] = sum;
+		if (tid < stride)
+			shared_data[tid] += shared_data[tid + stride];
+		__syncthreads();
 	}
+	if (tid == 0)
+		res[row * cols2 + col] = (T3)shared_data[0];
+}
+
+template <typename T1, typename T2, typename T3>
+__global__ static void matrix_multiply_kernel2
+(const T1* src1, const T2* src2, T3* res, const uint32_t rows1, const uint32_t cols1, const uint32_t cols2)
+{
+	const uint32_t row = blockIdx.x;
+	const uint32_t col = blockIdx.y;
+	extern __shared__ T3 shared_data2[];
+	T3 partial_sum = 0;
+	const uint32_t tid = threadIdx.x;
+	const uint32_t blockSize = blockDim.x;
+	for (uint32_t i = tid; i < cols1; i += blockSize)
+		partial_sum += (T3)src1[row * cols1 + i] * (T3)src2[i * cols2 + col];
+	shared_data2[tid] = partial_sum;
+	__syncthreads();
+	for (uint32_t stride = blockSize / 2; stride > 0; stride >>= 1)
+	{
+		if (tid < stride)
+			shared_data2[tid] += shared_data2[tid + stride];
+		__syncthreads();
+	}
+	if (tid == 0)
+		res[row * cols2 + col] = (T3)shared_data2[0];
+}
+
+template <typename T1, typename T2, typename T3>
+__global__ static void matrix_multiply_kernel3
+(const T1* src1, const T2* src2, T3* res, const uint32_t rows1, const uint32_t cols1, const uint32_t cols2)
+{
+	const uint32_t row = blockIdx.x;
+	const uint32_t col = blockIdx.y;
+	extern __shared__ double shared_data[];
+	double partial_sum = 0;
+	const uint32_t tid = threadIdx.x;
+	const uint32_t blockSize = blockDim.x;
+	for (uint32_t i = tid; i < cols1; i += blockSize)
+		partial_sum = __fma_rn((double)src1[row * cols1 + i], (double)src2[i * cols2 + col], partial_sum);
+	shared_data[tid] = partial_sum;
+	__syncthreads();
+	for (uint32_t stride = blockSize / 2; stride > 0; stride >>= 1)
+	{
+		if (tid < stride)
+			shared_data[tid] += shared_data[tid + stride];
+		__syncthreads();
+	}
+	if (tid == 0)
+		res[row * cols2 + col] = (T3)shared_data[0];
 }
 
 template <typename T> __global__ static void reshape_kernel
@@ -250,7 +305,5 @@ template <typename T> __global__ static void reshape_kernel
 	int idx = threadIdx.x + blockIdx.x * blockDim.x;
 	int idy = threadIdx.y + blockIdx.y * blockDim.y;
 	if (idx < rows_new && idy < cols_new && idx < rows_old && idy < cols_old)
-	{
 		res[idx * cols_new + idy] = src[idx * cols_old + idy];
-	}
 }

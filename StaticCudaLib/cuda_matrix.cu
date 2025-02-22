@@ -35,7 +35,7 @@ cumatrix<Type>::cumatrix() : rows(0), cols(0), mat(nullptr) {}
 template <typename Type>
 cumatrix<Type>::cumatrix(const uint32_t rows, const uint32_t cols) : rows(rows), cols(cols)
 {
-	allocate_matrix(rows, cols);
+	cudaMalloc((void**)&mat, static_cast<size_t>(rows) * cols * sizeof(value_type));
 	cudaMemset(mat, 0, static_cast<size_type>(rows) * cols * sizeof(value_type));
 	cublasCreate_v2(&handle);
 	cusolverDnCreate(&solver_handle);

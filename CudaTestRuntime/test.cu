@@ -10,72 +10,84 @@
 
 int main()
 {
-	constexpr int num_tests = 1e4;
-	constexpr int size = 10000;
-	int block_size = autoSetBlockSize(elementwise_add_kernel<float, double, float>);
-	int convert_block_size = autoSetBlockSize(convert_kernel<float, double>);
-	int grid_size = (size + block_size - 1) / block_size;
-	int convert_grid_size = (size + convert_block_size - 1) / convert_block_size;
-	clock_t start, end;
-	cout << "----------Basic Matrix Function Test----------" << endl
-		<< "Matrix Size: " << size << "x" << size << endl << "Loop Times: " << num_tests << endl
-		<< "----------Matrix Type Conversion Test----------" << endl << "0% Done";
-	start = clock();
-	for (int i = 1; i <= num_tests; i++)
+	constexpr uint32_t n = 1000;
+	constexpr int max_loop = 1000;
+	cumatrix<float> mat1(n, Random);
+	cumatrix<float> mat2(n, Random);
+	cumatrix<float> mat3(n); // result of cublas
+	cout << "cublas multiply test:" << endl;
+	clock_t start = clock();
+	for (int loop = 0; loop < max_loop; loop++)
 	{
-		cumatrix<float> mat1(size, Random);
-		cumatrix<double> mat2(size);
-		convert_kernel<float, double> << <convert_grid_size, convert_block_size >> >
-			(mat1.data(), mat2.data(), size * size);
-		cudaDeviceSynchronize();
-		if (i % (num_tests / 100) == 0)
-			cout << endl << i / (num_tests / 100) << "% Done";
-		if (i % (num_tests / 1000) == 0)
-			cout << ".";
+		cublasHandle_t handle;
+		cublasCreate_v2(&handle);
+		const float alpha = 1.0f;
+		const float beta = 0.0f;
+		cublasSgemm_v2(handle, CUBLAS_OP_N, CUBLAS_OP_N, n, n, n, &alpha, mat1.data(), n, mat2.data(), n, &beta, mat3.data(), n);
+		//cout << "Matrix res of cublas:" << endl;
+		//mat3.print();
+		cublasDestroy_v2(handle);
+		if (loop % 100 == 0)
+			cout << "loop: " << loop << endl;
 	}
-	end = clock();
-	cout << endl << "Time: " << (double)(end - start) / CLOCKS_PER_SEC << "s" << endl
-		<< "Loop Times: " << num_tests << endl
-		<< "----------Matrix Type Conversion Test Finished----------" << endl << endl
-		<< "----------Matrix Element-wise Addition Test----------" << endl << "0% Done";
+	clock_t time_used_cublas = clock() - start;
+	cumatrix<float> mat4(n); // result of kernel_float
+	dim3 grid(n, n);
+	int block_size = autoSetBlockSize(matrix_multiply_kernel3<float, float, float>);
+	size_t shared_memory_size = block_size * sizeof(float);
+	cout << "kernel multiply test(double + fma):" << endl;
 	start = clock();
-	for (int i = 1; i <= num_tests; i++)
+	for (int loop = 0; loop < max_loop * 10; loop++)
 	{
-		cumatrix<float> mat1(size, Random);
-		cumatrix<double> mat2(size, Random);
-		cumatrix<float> mat3(size);
-		elementwise_add_kernel<float, double, float> << <grid_size, block_size >> >
-			(mat1.data(), mat2.data(), mat3.data(), size * size);
+		matrix_multiply_kernel3<float, float, float>
+			<< <grid, block_size, shared_memory_size >> > (mat1.data(), mat2.data(), mat4.data(), n, n, n);
 		cudaDeviceSynchronize();
-		if (i % (num_tests / 100) == 0)
-			cout << endl << i / (num_tests / 100) << "% Done";
-		if (i % (num_tests / 10) == 0)
-			cout << ".";
+		if (loop % 100 == 0)
+			cout << "loop: " << loop << endl;
 	}
-	end = clock();
-	cout << endl << "Time: " << (double)(end - start) / CLOCKS_PER_SEC << "s" << endl
-		<< "Loop Times: " << num_tests << endl
-		<< "----------Matrix Element-wise Addition Test Finished----------" << endl << endl
-		<< "----------Matrix Element-wise Subtraction Test----------" << endl << "0% Done";
+	clock_t time_used_fma = clock() - start;
+	//cout << "Matrix res of kernel:" << endl;
+	//mat4.print();
+	cumatrix<float> mat5(n); // result of kernel_double
+	cout << "kernel multiply test(double):" << endl;
 	start = clock();
-	for (int i = 1; i <= num_tests; i++)
+	for (int loop = 0; loop < max_loop * 10; loop++)
 	{
-		cumatrix<float> mat1(size, Random);
-		cumatrix<double> mat2(size, Random);
-		cumatrix<float> mat3(size);
-		elementwise_subtract_kernel<float, double, float> << <grid_size, block_size >> >
-			(mat1.data(), mat2.data(), mat3.data(), size * size);
-		cudaDeviceSynchronize();
-		if (i % (num_tests / 100) == 0)
-			cout << endl << i / (num_tests / 100) << "% Done";
-		if (i % (num_tests / 10) == 0)
-			cout << ".";
+	matrix_multiply_kernel2<float, float, float>
+		<< <grid, block_size, shared_memory_size >> > (mat1.data(), mat2.data(), mat5.data(), n, n, n);
+	cudaDeviceSynchronize();
+	if (loop % 100 == 0)
+		cout << "loop: " << loop << endl;
 	}
-	end = clock();
-	cout << endl << "Time: " << (double)(end - start) / CLOCKS_PER_SEC << "s" << endl
-		<< "Loop Times: " << num_tests << endl
-		<< "----------Matrix Element-wise Subtraction Test Finished----------" << endl << endl
-		<< "----------Matrix Basic Function Test Finished----------" << endl;
+	clock_t time_used_without_fma = clock() - start;
+	//mat4.print();
+	vector<float> vec1(n * n);
+	vector<float> vec2(n * n);
+	cumatrix<float> mat6(n);
+	int threadsPerBlock = autoSetBlockSize(elementwise_subtract_kernel<float, float, float>);
+	int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+		elementwise_subtract_kernel<float, float, float>
+		<< <blocksPerGrid, threadsPerBlock >> > (mat4.data(), mat3.data(), mat6.data(), n * n);
+	cumatrix<float> mat7(n);
+	start = clock();
+	for (int loop = 0; loop < 1000; loop++)
+		elementwise_subtract_kernel<float, float, float>
+		<< <blocksPerGrid, threadsPerBlock >> > (mat5.data(), mat3.data(), mat7.data(), n * n);
+	mat6.get_data(vec1);
+	mat7.get_data(vec2);
+	float err1 = 0;
+	float err2 = 0;
+	for (int i = 0; i < n * n; i++)
+	{
+		err1 += abs(vec1[i]);
+		err2 += abs(vec2[i]);
+	}
+	cout << "Time used by cublas: " << time_used_cublas << "ms" << endl;
+	cout << "Error of kernel_fma: " << err1 << endl;
+	cout << "Time used by kernel with fma: " << time_used_fma << "ms" << endl;
+	cout << "Error of kernel_default: " << err2 << endl;
+	cout << "Time used by kernel without fma: " << time_used_without_fma << "ms" << endl;
+	cout << "Speedup of kernel with fma: " << (float)time_used_without_fma / (float)time_used_fma<< endl;
 	system("pause");
 	return 0;
 }
