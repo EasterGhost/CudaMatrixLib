@@ -21,7 +21,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
-    <VCToolsVersion>14.42.34433</VCToolsVersion>
+    <VCToolsVersion>14.43.34808</VCToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -43,8 +43,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>A:\Andrew Elizabeth\source\repos\EasterGhost\CudaMatrixLib\StaticCudaLib;$(CUDA_PATH_V12_8)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(CUDA_PATH_V12_8)\lib\x64;A:\Andrew Elizabeth\source\repos\EasterGhost\CudaMatrixLib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\StaticCudaLib;$(CUDA_PATH_V12_8)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(CUDA_PATH_V12_8)\lib\x64;$(SolutionDir)\x64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

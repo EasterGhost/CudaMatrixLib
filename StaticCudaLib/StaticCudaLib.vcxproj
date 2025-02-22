@@ -84,9 +84,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(CUDA_PATH_V12_8)$(CUDA_INCLUDE_PATH);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(CUDA_PATH_V12_8)\include;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
-    <ReferencePath>A:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\atlmfc\lib\x64;A:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\lib\x64;$(VC_ReferencesPath_x64);$(ReferencePath)</ReferencePath>
+    <ReferencePath>C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\atlmfc\lib\x64;A:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\lib\x64;$(VC_ReferencesPath_x64);$(ReferencePath)</ReferencePath>
     <LibraryPath>$(CUDA_PATH_V12_8)\lib\x64;$(LibraryPath)</LibraryPath>
     <ManagedAssembly>true</ManagedAssembly>
   </PropertyGroup>
